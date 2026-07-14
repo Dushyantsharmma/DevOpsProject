@@ -130,7 +130,7 @@
   .kv a:hover{ color:var(--amber); border-color:var(--amber); }
 
   ul.plain{ list-style:none; padding-left:0; margin:8px 0; }
-  ul.plain li::before{ content:"› "; color:var(--green-dim); }
+  ul.plain li::before{ content:"> "; color:var(--green-dim); }
 
   .grid{
     display:grid;
@@ -186,7 +186,7 @@
     border-radius:5px;
     font-size:12.5px;
   }
-  .badge::before{ content:"✓ "; color:var(--green); }
+  .badge::before{ content:"[x] "; color:var(--green); }
 
   .social{ display:flex; flex-wrap:wrap; gap:10px 22px; margin:10px 0; }
   .social a{
@@ -288,17 +288,17 @@
   <div class="screen" id="screen">
 
 <div class="banner">DUSHYANT SHARMA<span class="cursor2">_</span></div>
-    <p class="subtitle">Cloud &amp; DevOps Engineer <span class="amber">·</span> SRE Enthusiast <span class="amber">·</span> booted in 0.24s <span class="amber">·</span> type <b>help</b> below to explore</p>
+    <p class="subtitle">Cloud &amp; DevOps Engineer <span class="amber">-</span> SRE Enthusiast <span class="amber">-</span> booted in 0.24s <span class="amber">-</span> type <b>help</b> below to explore</p>
 
     <!-- whoami -->
     <div class="line"><span class="prompt"><span class="user">guest@portfolio</span>:~$</span><span class="cmd">whoami</span></div>
     <div class="output">
-      <p>Dushyant Sharma — Cloud / DevOps / SRE Engineer, based in India (remote friendly).</p>
+      <p>Dushyant Sharma  -  Cloud / DevOps / SRE Engineer, based in India (remote friendly).</p>
       <p class="dim">Automating infrastructure, building resilient pipelines, and contributing to open source. Coder by day, hacker by night.</p>
       <dl class="kv">
         <dt>email</dt><dd><a href="mailto:227dushyantsharma@gmail.com">227dushyantsharma@gmail.com</a></dd>
         <dt>location</dt><dd>India (Remote Friendly)</dd>
-        <dt>resume</dt><dd><a href="https://drive.google.com/uc?export=download&id=1OiWPRT7k8Dnv49D2T8Mux3J6Mir9kT1D">resume.pdf ⬇ download</a></dd>
+        <dt>resume</dt><dd><a href="https://drive.google.com/uc?export=download&id=1OiWPRT7k8Dnv49D2T8Mux3J6Mir9kT1D">resume.pdf (down) download</a></dd>
       </dl>
     </div>
 
@@ -306,7 +306,7 @@
     <div class="line"><span class="prompt"><span class="user">guest@portfolio</span>:~$</span><span class="cmd">cat focus.txt</span></div>
     <div class="output">
       <ul class="plain">
-        <li>Automating everything — CI/CD, infrastructure, monitoring</li>
+        <li>Automating everything  -  CI/CD, infrastructure, monitoring</li>
         <li>Hands-on with AWS, GCP, Azure, Docker, Kubernetes, Terraform</li>
         <li>Obsessed with scalability, SRE practice, and zero-downtime deploys</li>
         <li>Currently learning Go, Rust, service mesh, GitOps</li>
@@ -318,12 +318,12 @@
     <div class="line"><span class="prompt"><span class="user">guest@portfolio</span>:~$</span><span class="cmd">skills --all</span></div>
     <div class="output">
       <div class="grid">
-        <div><div class="cat">☁ cloud platforms</div><div class="items">AWS · GCP · Azure</div></div>
-        <div><div class="cat">⚙ devops tools</div><div class="items">Docker · Kubernetes · Terraform · Jenkins · GitHub Actions</div></div>
-        <div><div class="cat">📈 monitoring / sre</div><div class="items">CloudWatch · Prometheus · Grafana · Netdata · Splunk · Dynatrace</div></div>
-        <div><div class="cat">💻 programming</div><div class="items">Python · Java · Shell · R</div></div>
-        <div><div class="cat">🌐 web / frontend</div><div class="items">React · Firebase · HTML · CSS</div></div>
-        <div><div class="cat">🔐 security basics</div><div class="items">IAM · GCP Security · Palo Alto Academy Labs</div></div>
+        <div><div class="cat"> cloud platforms</div><div class="items">AWS - GCP - Azure</div></div>
+        <div><div class="cat"> devops tools</div><div class="items">Docker - Kubernetes - Terraform - Jenkins - GitHub Actions</div></div>
+        <div><div class="cat"> monitoring / sre</div><div class="items">CloudWatch - Prometheus - Grafana - Netdata - Splunk - Dynatrace</div></div>
+        <div><div class="cat"> programming</div><div class="items">Python - Java - Shell - R</div></div>
+        <div><div class="cat"> web / frontend</div><div class="items">React - Firebase - HTML - CSS</div></div>
+        <div><div class="cat"> security basics</div><div class="items">IAM - GCP Security - Palo Alto Academy Labs</div></div>
       </div>
     </div>
 
@@ -331,39 +331,39 @@
     <div class="line"><span class="prompt"><span class="user">guest@portfolio</span>:~$</span><span class="cmd">ls projects/ -l</span></div>
     <div class="output">
       <div class="proj">
-        <h4>🌾 AgroChain — Blockchain-Powered Marketplace</h4>
+        <h4> AgroChain  -  Blockchain-Powered Marketplace</h4>
         <p>Smart-contract-enabled marketplace connecting farmers, lenders, and consumers directly, cutting out middlemen.</p>
         <p>Predictive-analytics module built on Firebase &amp; Solidity to forecast crop demand and pricing.</p>
-        <p class="tag">stack: solidity · firebase · react</p>
+        <p class="tag">stack: solidity - firebase - react</p>
       </div>
       <div class="proj">
-        <h4>🏦 Bank Management System</h4>
+        <h4> Bank Management System</h4>
         <p>Full web banking app: account management, live transactions, and a dedicated admin control panel for oversight.</p>
         <p>Built to demonstrate secure CRUD flows and role-based access on top of Firebase auth.</p>
-        <p class="tag">stack: react · firebase</p>
+        <p class="tag">stack: react - firebase</p>
       </div>
       <div class="proj">
-        <h4>🔍 AWS / GCP Monitoring Setup</h4>
+        <h4> AWS / GCP Monitoring Setup</h4>
         <p>Real-time observability stack with Netdata and CloudWatch, plus alerting and dashboards for infra health.</p>
-        <p class="tag">stack: aws · gcp · netdata · cloudwatch</p>
+        <p class="tag">stack: aws - gcp - netdata - cloudwatch</p>
       </div>
       <div class="proj">
-        <h4>📊 <a class="link" href="https://github.com/Dushyantsharmma/Netdata-Monitoring-with-Docker" target="_blank" rel="noopener">Netdata Monitoring with Docker</a></h4>
+        <h4> <a class="link" href="https://github.com/Dushyantsharmma/Netdata-Monitoring-with-Docker" target="_blank" rel="noopener">Netdata Monitoring with Docker</a></h4>
         <p>Real-time system dashboard (CPU, memory, disk, network) via Netdata running in Docker on WSL.</p>
-        <p class="tag">stack: docker · netdata · linux</p>
+        <p class="tag">stack: docker - netdata - linux</p>
       </div>
       <div class="proj">
-        <h4>🔧 <a class="link" href="https://github.com/Dushyantsharmma/Jenkins-Zero-To-Hero" target="_blank" rel="noopener">Jenkins Zero To Hero</a></h4>
+        <h4> <a class="link" href="https://github.com/Dushyantsharmma/Jenkins-Zero-To-Hero" target="_blank" rel="noopener">Jenkins Zero To Hero</a></h4>
         <p>Jenkins CI/CD setup with Docker as a build agent, deploying to Kubernetes via Argo CD (GitOps).</p>
-        <p class="tag">stack: jenkins · docker · k8s · argo cd</p>
+        <p class="tag">stack: jenkins - docker - k8s - argo cd</p>
       </div>
       <div class="proj">
-        <h4>🌍 <a class="link" href="https://github.com/Dushyantsharmma/terraform-zero-to-hero" target="_blank" rel="noopener">Terraform Zero To Hero</a></h4>
+        <h4> <a class="link" href="https://github.com/Dushyantsharmma/terraform-zero-to-hero" target="_blank" rel="noopener">Terraform Zero To Hero</a></h4>
         <p>Hands-on Terraform fundamentals through advanced IaC patterns.</p>
-        <p class="tag">stack: terraform · hcl</p>
+        <p class="tag">stack: terraform - hcl</p>
       </div>
     </div>
-    <p class="dim" style="margin:10px 0 0;">→ <a class="link" href="https://github.com/Dushyantsharmma?tab=repositories" target="_blank" rel="noopener">view all repos on GitHub</a></p>
+    <p class="dim" style="margin:10px 0 0;">-> <a class="link" href="https://github.com/Dushyantsharmma?tab=repositories" target="_blank" rel="noopener">view all repos on GitHub</a></p>
 
     <!-- certs --list -->
     <div class="line"><span class="prompt"><span class="user">guest@portfolio</span>:~$</span><span class="cmd">certs --list</span></div>
@@ -372,7 +372,7 @@
         <span class="badge"><a class="link" href="https://www.cloudskillsboost.google/public_profiles/c4374c70-f738-4169-9231-67712627075a" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">Google Cloud Skills Boost</a></span>
         <span class="badge"><a class="link" href="https://www.credly.com/users/dushyant-sharma.c2136780/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">Credly Certifications</a></span>
         <span class="badge">AWS Academy Cloud Foundations</span>
-        <span class="badge">NPTEL — Cloud Computing (IIT Kharagpur)</span>
+        <span class="badge">NPTEL  -  Cloud Computing (IIT Kharagpur)</span>
         <span class="badge">Palo Alto Cloud Security Engineer</span>
       </div>
     </div>
@@ -384,35 +384,35 @@
         <div class="yr">2021</div>
         <div class="body">
           <p class="head">Started B.E. in Cloud Computing @ Chandigarh University</p>
-          <p>Foundation in CS fundamentals · first exposure to cloud concepts</p>
+          <p>Foundation in CS fundamentals - first exposure to cloud concepts</p>
         </div>
       </div>
       <div class="tl-year">
         <div class="yr">2022</div>
         <div class="body">
           <p class="head">Programming &amp; web development</p>
-          <p>Java, OOPs, DSA · built static and dynamic websites</p>
+          <p>Java, OOPs, DSA - built static and dynamic websites</p>
         </div>
       </div>
       <div class="tl-year">
         <div class="yr">2023</div>
         <div class="body">
           <p class="head">Google Cloud Bootcamp &amp; real projects</p>
-          <p>Built AgroChain on blockchain &amp; Firebase · completed the 8-week Google Cloud Bootcamp by GeeksforGeeks</p>
+          <p>Built AgroChain on blockchain &amp; Firebase - completed the 8-week Google Cloud Bootcamp by GeeksforGeeks</p>
         </div>
       </div>
       <div class="tl-year">
         <div class="yr">2024</div>
         <div class="body">
           <p class="head">DevOps &amp; infrastructure mastery</p>
-          <p>Terraform, Docker, Kubernetes, CI/CD · monitoring with Prometheus &amp; Grafana · beginner → intermediate MLOps</p>
+          <p>Terraform, Docker, Kubernetes, CI/CD - monitoring with Prometheus &amp; Grafana - beginner -> intermediate MLOps</p>
         </div>
       </div>
       <div class="tl-year">
         <div class="yr">2025</div>
         <div class="body">
           <p class="head">Internship &amp; cloud automation</p>
-          <p>DevOps Intern @ Elevate Labs (May–Jun 2025) · GitHub Actions, Docker, Linux &amp; AWS</p>
+          <p>DevOps Intern @ Elevate Labs (May-Jun 2025) - GitHub Actions, Docker, Linux &amp; AWS</p>
         </div>
       </div>
     </div>
@@ -429,47 +429,47 @@
         <a href="https://www.facebook.com/dushyanat.sharma/" target="_blank" rel="noopener"><span class="key">facebook</span> dushyanat.sharma</a>
         <a href="https://www.credly.com/users/dushyant-sharma.c2136780/" target="_blank" rel="noopener"><span class="key">credly</span> badges</a>
         <a href="https://www.cloudskillsboost.google/public_profiles/c4374c70-f738-4169-9231-67712627075a" target="_blank" rel="noopener"><span class="key">gcloud</span> skills profile</a>
-        <a href="https://drive.google.com/uc?export=download&id=1OiWPRT7k8Dnv49D2T8Mux3J6Mir9kT1D" ><span class="key">resume</span> download ⬇</a>
+        <a href="https://drive.google.com/uc?export=download&id=1OiWPRT7k8Dnv49D2T8Mux3J6Mir9kT1D" ><span class="key">resume</span> download (down)</a>
       </div>
     </div>
 
     <!-- stats --github -->
     <div class="line"><span class="prompt"><span class="user">guest@portfolio</span>:~$</span><span class="cmd">stats --github</span></div>
     <div class="output">
-      <p><img src="https://github-readme-stats.vercel.app/api?username=Dushyantsharmma&show_icons=true&theme=tokyonight&hide_border=true&bg_color=00000000" alt="GitHub stats" style="max-width:100%;height:auto;"></p>
-      <p><img src="https://github-readme-streak-stats.herokuapp.com/?user=Dushyantsharmma&theme=tokyonight&hide_border=true&background=00000000" alt="Streak stats" style="max-width:100%;height:auto;"></p>
-      <p><img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Dushyantsharmma&layout=compact&theme=tokyonight&hide_border=true&bg_color=00000000" alt="Top languages" style="max-width:100%;height:auto;"></p>
-      <p><img src="https://github-profile-trophy.vercel.app/?username=Dushyantsharmma&theme=algolia&margin-w=8&margin-h=8&no-bg=true&no-frame=true" alt="Trophies" style="max-width:100%;height:auto;"></p>
+      <p><img src="https://github-readme-stats.vercel.app/api?username=Dushyantsharmma&show_icons=true&theme=tokyonight&hide_border=true&bg_color=00000000" alt="GitHub stats" style="max-width:100%;height:auto;" onerror="this.outerHTML='<span class=\'dim\'>stats card unavailable - </span><a class=\'link\' href=\'https://github.com/Dushyantsharmma\' target=\'_blank\'>view on GitHub</a>'"></p>
+      <p><img src="https://github-readme-streak-stats.herokuapp.com/?user=Dushyantsharmma&theme=tokyonight&hide_border=true&background=00000000" alt="Streak stats" style="max-width:100%;height:auto;" onerror="this.remove()"></p>
+      <p><img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Dushyantsharmma&layout=compact&theme=tokyonight&hide_border=true&bg_color=00000000" alt="Top languages" style="max-width:100%;height:auto;" onerror="this.remove()"></p>
+      <p><img src="https://github-profile-trophy.vercel.app/?username=Dushyantsharmma&theme=algolia&margin-w=8&margin-h=8&no-bg=true&no-frame=true" alt="Trophies" style="max-width:100%;height:auto;" onerror="this.remove()"></p>
+      <p class="dim">(images load from GitHub's live badge services - if any fail to render, <a class="link" href="https://github.com/Dushyantsharmma" target="_blank">see live stats on GitHub</a>)</p>
     </div>
 
     <!-- tools --modern -->
     <div class="line"><span class="prompt"><span class="user">guest@portfolio</span>:~$</span><span class="cmd">tools --modern</span></div>
     <div class="output">
       <div class="grid">
-        <div><div class="cat">🧭 cluster ops</div><div class="items">K9s · Lens · Helm · Kustomize</div></div>
-        <div><div class="cat">🔄 gitops / cd</div><div class="items">Argo CD · Flux</div></div>
-        <div><div class="cat">🏗 iac</div><div class="items">Terraform · Terragrunt · Pulumi</div></div>
-        <div><div class="cat">🕸 service mesh</div><div class="items">Istio · Linkerd</div></div>
-        <div><div class="cat">🔍 observability</div><div class="items">Grafana · Prometheus · Loki · OpenTelemetry</div></div>
-        <div><div class="cat">🔐 secrets/sec</div><div class="items">Vault · Trivy · SOPS</div></div>
+        <div><div class="cat"> cluster ops</div><div class="items">K9s - Lens - Helm - Kustomize</div></div>
+        <div><div class="cat"> gitops / cd</div><div class="items">Argo CD - Flux</div></div>
+        <div><div class="cat"> iac</div><div class="items">Terraform - Terragrunt - Pulumi</div></div>
+        <div><div class="cat"> service mesh</div><div class="items">Istio - Linkerd</div></div>
+        <div><div class="cat"> observability</div><div class="items">Grafana - Prometheus - Loki - OpenTelemetry</div></div>
+        <div><div class="cat"> secrets/sec</div><div class="items">Vault - Trivy - SOPS</div></div>
       </div>
     </div>
 
     <hr class="rule">
-    <p class="dim" style="margin:0 0 20px;">"Code. Break. Fix. Learn. Repeat." <span class="amber">—</span> Dushyant Sharma</p>
+    <p class="dim" style="margin:0 0 20px;">"Code. Break. Fix. Learn. Repeat." <span class="amber"> - </span> Dushyant Sharma</p>
 
   </div>
 
   <div class="inputline">
     <span class="prompt"><span class="user">guest@portfolio</span>:~$</span>
-    <input id="cmdInput" type="text" autocomplete="off" spellcheck="false" placeholder="type a command…">
+    <input id="cmdInput" type="text" autocomplete="off" spellcheck="false" placeholder="type a command...">
     <span class="cursor"></span>
   </div>
-  <p class="hint">try <kbd>whoami</kbd> · <kbd>projects</kbd> · <kbd>stats</kbd> · <kbd>tools</kbd> · <kbd>resume</kbd> · <kbd>uptime</kbd> · <kbd>neofetch</kbd> · <kbd>joke</kbd> · <kbd>contact</kbd> — <kbd>↑↓</kbd> history, <kbd>Tab</kbd> autocomplete</p>
+  <p class="hint">try <kbd>whoami</kbd> - <kbd>projects</kbd> - <kbd>stats</kbd> - <kbd>tools</kbd> - <kbd>resume</kbd> - <kbd>uptime</kbd> - <kbd>neofetch</kbd> - <kbd>joke</kbd> - <kbd>contact</kbd>  -  <kbd>UpDown</kbd> history, <kbd>Tab</kbd> autocomplete</p>
 </div>
 
-<script>
-  const screen = document.getElementById('screen');
+<script> const screen = document.getElementById('screen');
   const input  = document.getElementById('cmdInput');
   const term   = document.getElementById('term');
 
@@ -479,25 +479,25 @@
     "There's no place like 127.0.0.1.",
     "I'd tell you a Kubernetes joke but it needs 3 replicas to land.",
     "My code doesn't have bugs, it has undocumented features.",
-    "Terraform apply — the closest thing to a leap of faith in this job."
+    "Terraform apply  -  the closest thing to a leap of faith in this job."
   ];
 
   const responses = {
     help: `Commands: whoami, about, skills, projects, certs, timeline, stats, tools, contact, resume, social, github, uptime, neofetch, joke, matrix, coffee, sudo whoami, clear`,
-    whoami: `Dushyant Sharma — Cloud/DevOps/SRE engineer based in India, remote friendly. Automating infra, writing resilient pipelines, contributing to open source.`,
-    about: `Dushyant Sharma — Cloud/DevOps/SRE engineer based in India, remote friendly. Automating infra, writing resilient pipelines, contributing to open source.`,
-    skills: `Cloud: AWS · GCP · Azure  |  DevOps: Docker · Kubernetes · Terraform · Jenkins · GitHub Actions  |  Monitoring: CloudWatch · Prometheus · Grafana  |  Code: Python · Java · Shell · R`,
-    projects: `AgroChain · Bank Management System · AWS/GCP Monitoring Setup · <a class="link" href="https://github.com/Dushyantsharmma/Netdata-Monitoring-with-Docker" target="_blank">Netdata-Monitoring-with-Docker</a> · <a class="link" href="https://github.com/Dushyantsharmma/Jenkins-Zero-To-Hero" target="_blank">Jenkins-Zero-To-Hero</a> · <a class="link" href="https://github.com/Dushyantsharmma/terraform-zero-to-hero" target="_blank">terraform-zero-to-hero</a> — full list on <a class="link" href="https://github.com/Dushyantsharmma?tab=repositories" target="_blank">GitHub</a>`,
-    certs: `Google Cloud Skills Boost · AWS Academy Cloud Foundations · NPTEL Cloud Computing (IIT Kharagpur) · Palo Alto Cloud Security Engineer`,
-    timeline: `2021 Chandigarh University → 2022 Programming fundamentals → 2023 Google Cloud Bootcamp + AgroChain → 2024 DevOps mastery → 2025 DevOps Intern @ Elevate Labs`,
-    resume: `Downloading resume.pdf…`,
-    social: `github.com/Dushyantsharmma · linkedin.com/in/dushyant-sharma-3619b420b · instagram @dushyantshharmaa_ · x @Dushyantsharmaq`,
+    whoami: `Dushyant Sharma  -  Cloud/DevOps/SRE engineer based in India, remote friendly. Automating infra, writing resilient pipelines, contributing to open source.`,
+    about: `Dushyant Sharma  -  Cloud/DevOps/SRE engineer based in India, remote friendly. Automating infra, writing resilient pipelines, contributing to open source.`,
+    skills: `Cloud: AWS - GCP - Azure  |  DevOps: Docker - Kubernetes - Terraform - Jenkins - GitHub Actions  |  Monitoring: CloudWatch - Prometheus - Grafana  |  Code: Python - Java - Shell - R`,
+    projects: `AgroChain - Bank Management System - AWS/GCP Monitoring Setup - <a class="link" href="https://github.com/Dushyantsharmma/Netdata-Monitoring-with-Docker" target="_blank">Netdata-Monitoring-with-Docker</a> - <a class="link" href="https://github.com/Dushyantsharmma/Jenkins-Zero-To-Hero" target="_blank">Jenkins-Zero-To-Hero</a> - <a class="link" href="https://github.com/Dushyantsharmma/terraform-zero-to-hero" target="_blank">terraform-zero-to-hero</a>  -  full list on <a class="link" href="https://github.com/Dushyantsharmma?tab=repositories" target="_blank">GitHub</a>`,
+    certs: `Google Cloud Skills Boost - AWS Academy Cloud Foundations - NPTEL Cloud Computing (IIT Kharagpur) - Palo Alto Cloud Security Engineer`,
+    timeline: `2021 Chandigarh University -> 2022 Programming fundamentals -> 2023 Google Cloud Bootcamp + AgroChain -> 2024 DevOps mastery -> 2025 DevOps Intern @ Elevate Labs`,
+    resume: `Downloading resume.pdf...`,
+    social: `github.com/Dushyantsharmma - linkedin.com/in/dushyant-sharma-3619b420b - instagram @dushyantshharmaa_ - x @Dushyantsharmaq`,
     contact: `Reach me at 227dushyantsharma@gmail.com, on <a class="link" href="https://linkedin.com/in/dushyant-sharma-3619b420b/" target="_blank">LinkedIn</a>, or scroll up for GitHub / Instagram / X / Credly links.`,
-    github: `Opening GitHub profile…`,
+    github: `Opening GitHub profile...`,
     stats: `Scroll up to the <b>stats --github</b> block for live GitHub stats, streak, top languages, and trophies.`,
     tools: `Scroll up to <b>tools --modern</b> for the current DevOps toolbelt: K9s, Argo CD, Terragrunt, Istio, Vault, and more.`,
-    coffee: `☕ brewing... done. Caffeine level: optimal. Resuming deployment.`,
-    matrix: `Wake up, Neo... the pipeline has you. 💊`,
+    coffee: ` brewing... done. Caffeine level: optimal. Resuming deployment.`,
+    matrix: `Wake up, Neo... the pipeline has you. `,
   };
 
   function appendLine(cmdText){
@@ -529,9 +529,9 @@
       return;
     }
     if(key === 'sudo whoami'){
-      appendOutput(`<span class="amber">guest is not in the sudoers file. This incident will be reported.</span> <span class="dim">(just kidding — it's still Dushyant.)</span>`);
+      appendOutput(`<span class="amber">guest is not in the sudoers file. This incident will be reported.</span> <span class="dim">(just kidding  -  it's still Dushyant.)</span>`);
     } else if(key === 'sudo rm -rf /' || key === 'sudo rm -rf /*'){
-      appendOutput(`<span class="amber">Nice try 😄</span> deleting production is a rite of passage, not a feature. Nothing was harmed.`);
+      appendOutput(`<span class="amber">Nice try </span> deleting production is a rite of passage, not a feature. Nothing was harmed.`);
     } else if(key === 'resume'){
       appendOutput(responses.resume);
       const a = document.createElement('a');
@@ -542,15 +542,15 @@
       window.open('https://github.com/Dushyantsharmma', '_blank');
     } else if(key === 'uptime'){
       const s = Math.floor((Date.now() - bootTime) / 1000);
-      appendOutput(`up ${s}s · guest sessions: 1 · load average: 0.42, 0.13, 0.07 <span class="dim">(all green, all good)</span>`);
+      appendOutput(`up ${s}s - guest sessions: 1 - load average: 0.42, 0.13, 0.07 <span class="dim">(all green, all good)</span>`);
     } else if(key === 'neofetch'){
-      appendOutput(`<span class="green">guest@portfolio</span><br>OS: DushyantOS (Cloud Edition)<br>Uptime: ${Math.floor((Date.now()-bootTime)/1000)}s<br>Shell: dushyant-sh<br>CPU: Coffee-powered ☕<br>Memory: 99% ideas, 1% sleep`);
+      appendOutput(`<span class="green">guest@portfolio</span><br>OS: DushyantOS (Cloud Edition)<br>Uptime: ${Math.floor((Date.now()-bootTime)/1000)}s<br>Shell: dushyant-sh<br>CPU: Coffee-powered <br>Memory: 99% ideas, 1% sleep`);
     } else if(key === 'joke'){
       appendOutput(jokes[Math.floor(Math.random()*jokes.length)]);
     } else if(responses[key]){
       appendOutput(responses[key]);
     } else {
-      appendOutput(`<span class="dim">command not found:</span> ${cmd} <span class="dim">— type</span> help`);
+      appendOutput(`<span class="dim">command not found:</span> ${cmd} <span class="dim"> -  type</span> help`);
     }
     window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' });
   }
