@@ -33,8 +33,12 @@
     font-family:'JetBrains Mono', monospace;
     font-size:15px;
     line-height:1.6;
-    min-height:100vh;
-    padding:28px 16px 80px;
+    height:100vh;
+    overflow:hidden;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
 
   /* CRT scanline + vignette overlay */
@@ -62,12 +66,16 @@
   .term{
     max-width:900px;
     width:100%;
+    height:85vh;
+    max-height:760px;
     margin:0 auto;
     background:var(--bg-raised);
     border:1px solid var(--border);
     border-radius:10px;
     box-shadow:0 0 0 1px rgba(57,255,138,0.04), 0 30px 80px -20px rgba(0,0,0,0.8), 0 0 40px -10px rgba(57,255,138,0.06);
     overflow:hidden;
+    display:flex;
+    flex-direction:column;
   }
 
   .titlebar{
@@ -77,6 +85,7 @@
     padding:11px 14px;
     background:linear-gradient(180deg,#0e1710,#0a120c);
     border-bottom:1px solid var(--border);
+    flex:none;
   }
   .dot{ width:11px; height:11px; border-radius:50%; }
   .dot.r{ background:var(--red); }
@@ -91,6 +100,9 @@
 
   .screen{
     padding:26px 26px 10px;
+    flex:1 1 auto;
+    overflow-y:auto;
+    min-height:0;
   }
 
   .banner{
@@ -210,9 +222,10 @@
     display:flex;
     align-items:center;
     gap:10px;
-    padding:16px 26px 24px;
+    padding:14px 26px;
     border-top:1px solid var(--border);
     background:linear-gradient(180deg, rgba(57,255,138,0.015), transparent);
+    flex:none;
   }
   .inputline .prompt{ flex:none; }
   .inputline input{
@@ -239,8 +252,9 @@
   .hint{
     color:var(--text-dim);
     font-size:12px;
-    padding:0 26px 20px;
+    padding:0 26px 12px;
     margin-top:-6px;
+    flex:none;
   }
   .hint kbd{
     background:var(--bg);
@@ -256,7 +270,7 @@
   ::selection{ background:var(--green-dark); color:#eaffef; }
 
   @media (max-width:600px){
-    body{ padding:14px 8px 60px; font-size:13.5px; }
+    body{ padding:8px; font-size:13.5px; }
     .screen{ padding:18px 16px 6px; }
     .kv{ grid-template-columns:100px 1fr; }
     .inputline{ padding:14px 16px 20px; }
@@ -552,7 +566,7 @@
     } else {
       appendOutput(`<span class="dim">command not found:</span> ${cmd} <span class="dim"> -  type</span> help`);
     }
-    window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' });
+    try{ screen.scrollTo({ top: screen.scrollHeight, behavior:'smooth' }); }catch(e){ screen.scrollTop = screen.scrollHeight; }
   }
 
   const cmdList = Object.keys(responses).concat(['sudo whoami','clear','uptime','neofetch','joke']);
@@ -585,7 +599,7 @@
   });
 
   term.addEventListener('click', () => input.focus());
-  window.addEventListener('load', () => input.focus());
+  window.addEventListener('load', () => { input.focus(); screen.scrollTop = screen.scrollHeight; });
 </script>
 
 </body>
