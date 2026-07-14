@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>dushyant@portfolio: ~</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap');
@@ -23,7 +23,7 @@
 
   *{ box-sizing:border-box; }
 
-  html{ scroll-behavior:smooth; }
+  html{ scroll-behavior:smooth; overflow-x:hidden; }
 
   body{
     margin:0;
@@ -61,6 +61,7 @@
 
   .term{
     max-width:900px;
+    width:100%;
     margin:0 auto;
     background:var(--bg-raised);
     border:1px solid var(--border);
@@ -92,14 +93,17 @@
     padding:26px 26px 10px;
   }
 
-  pre.banner{
+  .banner{
     color:var(--green);
-    font-size:10.5px;
-    line-height:1.15;
+    font-size:clamp(20px,5vw,34px);
+    font-weight:800;
+    letter-spacing:.06em;
     margin:0 0 4px;
     text-shadow:0 0 10px rgba(57,255,138,0.35);
-    overflow-x:auto;
+    white-space:normal;
+    word-break:break-word;
   }
+  .cursor2{ animation:blink 1s steps(1) infinite; }
 
   .subtitle{
     color:var(--text-dim);
@@ -254,9 +258,17 @@
   @media (max-width:600px){
     body{ padding:14px 8px 60px; font-size:13.5px; }
     .screen{ padding:18px 16px 6px; }
-    pre.banner{ font-size:7px; }
     .kv{ grid-template-columns:100px 1fr; }
     .inputline{ padding:14px 16px 20px; }
+    .tl-year{ flex-direction:column; gap:2px; }
+    .titlebar span.path{ max-width:60vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    table{ display:block; overflow-x:auto; }
+  }
+  @media (max-width:380px){
+    .banner{ font-size:18px; }
+    .kv{ grid-template-columns:1fr; }
+    .kv dt{ margin-top:6px; }
+    .grid{ grid-template-columns:1fr; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -275,14 +287,7 @@
 
   <div class="screen" id="screen">
 
-<pre class="banner">
- ██████╗ ██╗   ██╗███████╗██╗  ██╗██╗   ██╗ █████╗ ███╗   ██╗████████╗
- ██╔══██╗██║   ██║██╔════╝██║  ██║╚██╗ ██╔╝██╔══██╗████╗  ██║╚══██╔══╝
- ██║  ██║██║   ██║███████╗███████║ ╚████╔╝ ███████║██╔██╗ ██║   ██║
- ██║  ██║██║   ██║╚════██║██╔══██║  ╚██╔╝  ██╔══██║██║╚██╗██║   ██║
- ██████╔╝╚██████╔╝███████║██║  ██║   ██║   ██║  ██║██║ ╚████║   ██║
- ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝
-</pre>
+<div class="banner">DUSHYANT SHARMA<span class="cursor2">_</span></div>
     <p class="subtitle">Cloud &amp; DevOps Engineer <span class="amber">·</span> SRE Enthusiast <span class="amber">·</span> booted in 0.24s <span class="amber">·</span> type <b>help</b> below to explore</p>
 
     <!-- whoami -->
