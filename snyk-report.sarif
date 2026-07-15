@@ -1,0 +1,1664 @@
+{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Snyk Container",
+          "semanticVersion": "1.1306.0",
+          "version": "1.1306.0",
+          "informationUri": "https://docs.snyk.io/",
+          "properties": {
+            "artifactsScanned": 118
+          },
+          "rules": [
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-13570212",
+              "shortDescription": {
+                "text": "Medium severity - Out-of-Bounds vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-11495) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nA vulnerability was determined in GNU Binutils 2.45. The affected element is the function elf_x86_64_relocate_section of the file elf64-x86-64.c of the component Linker. This manipulation causes heap-based buffer overflow. The attack can only be executed locally. The exploit has been publicly disclosed and may be utilized. Patch name: 6b21c8b2ecfef5c95142cbc2c32f185cb1c26ab0. To fix this issue, it is recommended to deploy a patch.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-11495](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-11495)\n- [https://sourceware.org/bugzilla/attachment.cgi?id=16393](https://sourceware.org/bugzilla/attachment.cgi?id=16393)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33502](https://sourceware.org/bugzilla/show_bug.cgi?id=33502)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33502#c3](https://sourceware.org/bugzilla/show_bug.cgi?id=33502#c3)\n- [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=6b21c8b2ecfef5c95142cbc2c32f185cb1c26ab0](https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=6b21c8b2ecfef5c95142cbc2c32f185cb1c26ab0)\n- [https://vuldb.com/?ctiid.327620](https://vuldb.com/?ctiid.327620)\n- [https://vuldb.com/?id.327620](https://vuldb.com/?id.327620)\n- [https://vuldb.com/?submit.668290](https://vuldb.com/?submit.668290)\n- [https://www.gnu.org/](https://www.gnu.org/)\n- [https://cert-portal.siemens.com/productcert/html/ssa-082556.html](https://cert-portal.siemens.com/productcert/html/ssa-082556.html)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-119",
+                  "CWE-122",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 5.5,
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-15440796",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2025-69646 vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-69646) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nBinutils objdump contains a denial-of-service vulnerability when processing a crafted binary with malformed DWARF debug_rnglists data. A logic error in the handling of the debug_rnglists header can cause objdump to repeatedly print the same warning message and fail to terminate, resulting in an unbounded logging loop until the process is interrupted. The issue was observed in binutils 2.44. A local attacker can exploit this vulnerability by supplying a malicious input file, leading to excessive CPU and I/O usage and preventing completion of the objdump analysis.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69646](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69646)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33638](https://sourceware.org/bugzilla/show_bug.cgi?id=33638)\n- [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=598704a00cbac5e85c2bedd363357b5bf6fcee33](https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=598704a00cbac5e85c2bedd363357b5bf6fcee33)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-15440858",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2025-69645 vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-69645) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nBinutils objdump contains a denial-of-service vulnerability when processing a crafted binary with malformed DWARF debug information. A logic error in the handling of DWARF compilation units can result in an invalid offset_size value being used inside byte_get_little_endian, leading to an abort (SIGABRT). The issue was observed in binutils 2.44. A local attacker can trigger the crash by supplying a malicious input file.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69645](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69645)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33637](https://sourceware.org/bugzilla/show_bug.cgi?id=33637)\n- [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=cdb728d4da6184631989b192f1022c219dea7677](https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=cdb728d4da6184631989b192f1022c219dea7677)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-15440868",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2025-69651 vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-69651) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nGNU Binutils thru 2.46 readelf contains a vulnerability that leads to an invalid pointer free when processing a crafted ELF binary with malformed relocation or symbol data. If dump_relocations returns early due to parsing errors, the internal all_relocations array may remain partially uninitialized. Later, process_got_section_contents() may attempt to free an invalid r_symbol pointer, triggering memory corruption checks in glibc and causing the program to terminate with SIGABRT. No evidence of further memory corruption or code execution was observed; the impact is limited to denial of service. NOTE: this is disputed by third parties because the observed behavior occurred only in pre-release code and did not affect any tagged version.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69651](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69651)\n- [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=ea4bc025abdba85a90e26e13f551c16a44bfa921](https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=ea4bc025abdba85a90e26e13f551c16a44bfa921)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33698](https://sourceware.org/bugzilla/show_bug.cgi?id=33698)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33700](https://sourceware.org/bugzilla/show_bug.cgi?id=33700)\n- [https://sourceware.org/git/?p=binutils-gdb.git;a=commitdiff;h=81e90cf63a10ad11772c2437c8f2a88f1a00c739](https://sourceware.org/git/?p=binutils-gdb.git;a=commitdiff;h=81e90cf63a10ad11772c2437c8f2a88f1a00c739)\n- [https://sourceware.org/git/?p=binutils-gdb.git;a=commitdiff;h=ea4bc025abdba85a90e26e13f551c16a44bfa92](https://sourceware.org/git/?p=binutils-gdb.git;a=commitdiff;h=ea4bc025abdba85a90e26e13f551c16a44bfa92)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 5.5,
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-15440947",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2025-69652 vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-69652) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nGNU Binutils thru 2.46 readelf contains a vulnerability that leads to an abort (SIGABRT) when processing a crafted ELF binary with malformed DWARF abbrev or debug information. Due to incomplete state cleanup in process_debug_info(), an invalid debug_info_p state may propagate into DWARF attribute parsing routines. When certain malformed attributes result in an unexpected data length of zero, byte_get_little_endian() triggers a fatal abort. No evidence of memory corruption or code execution was observed; the impact is limited to denial of service.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69652](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69652)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33701](https://sourceware.org/bugzilla/show_bug.cgi?id=33701)\n- [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=44b79abd0fa12e7947252eb4c6e5d16ed6033e01](https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=44b79abd0fa12e7947252eb4c6e5d16ed6033e01)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-15440987",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2025-69644 vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-69644) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nAn issue was discovered in Binutils before 2.46. The objdump contains a denial-of-service vulnerability when processing a crafted binary with malformed debug information. A logic flaw in the handling of DWARF location list headers can cause objdump to enter an unbounded loop and produce endless output until manually interrupted. This issue affects versions prior to the upstream fix and allows a local attacker to cause excessive resource consumption by supplying a malicious input file.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69644](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69644)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33639](https://sourceware.org/bugzilla/show_bug.cgi?id=33639)\n- [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=455446bbdc8675f34808187de2bbad4682016ff7](https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=455446bbdc8675f34808187de2bbad4682016ff7)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-15444964",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2025-69647 vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-69647) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nGNU Binutils thru 2.45.1 readelf contains a denial-of-service vulnerability when processing a crafted binary with malformed DWARF loclists data. A logic flaw in the DWARF parsing code can cause readelf to repeatedly print the same table output without making forward progress, resulting in an unbounded output loop that never terminates unless externally interrupted. A local attacker can trigger this behavior by supplying a malicious input file, causing excessive CPU and I/O usage and preventing readelf from completing its analysis.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69647](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69647)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33640](https://sourceware.org/bugzilla/show_bug.cgi?id=33640)\n- [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=455446bbdc8675f34808187de2bbad4682016ff7](https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=455446bbdc8675f34808187de2bbad4682016ff7)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-15444976",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2025-69648 vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-69648) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nGNU Binutils thru 2.45.1 readelf contains a denial-of-service vulnerability when processing a crafted binary with malformed DWARF .debug_rnglists data. A logic flaw in the DWARF parsing path causes readelf to repeatedly print the same warning message without making forward progress, resulting in a non-terminating output loop that requires manual interruption. No evidence of memory corruption or code execution was observed.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69648](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69648)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33641](https://sourceware.org/bugzilla/show_bug.cgi?id=33641)\n- [https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=598704a00cbac5e85c2bedd363357b5bf6fcee33](https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=598704a00cbac5e85c2bedd363357b5bf6fcee33)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-6725747",
+              "shortDescription": {
+                "text": "Low severity - Allocation of Resources Without Limits or Throttling vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2017-13716) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nThe C++ symbol demangler routine in cplus-dem.c in libiberty, as distributed in GNU Binutils 2.29, allows remote attackers to cause a denial of service (excessive memory allocation and application crash) via a crafted file, as demonstrated by a call from the Binary File Descriptor (BFD) library (aka libbfd).\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2017-13716](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2017-13716)\n- [https://security-tracker.debian.org/tracker/CVE-2017-13716](https://security-tracker.debian.org/tracker/CVE-2017-13716)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=22009](https://sourceware.org/bugzilla/show_bug.cgi?id=22009)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-770",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 5.5,
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-BINUTILS-8707711",
+              "shortDescription": {
+                "text": "Low severity - Memory Leak vulnerability in binutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-1152) binutils/binutils-common@2.42-4ubuntu2.10"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `binutils` package and not the `binutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nA vulnerability classified as problematic has been found in GNU Binutils 2.43. Affected is the function xstrdup of the file xstrdup.c of the component ld. The manipulation leads to memory leak. It is possible to launch the attack remotely. The complexity of an attack is rather high. The exploitability is told to be difficult. The exploit has been disclosed to the public and may be used. It is recommended to apply a patch to fix this issue. The code maintainer explains: &#34;I&#39;m not going to commit some of the leak fixes I&#39;ve been working on to the 2.44 branch due to concern that would destabilise ld. All of the reported leaks in this bugzilla have been fixed on binutils master.&#34;\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `binutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-1152](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-1152)\n- [https://sourceware.org/bugzilla/attachment.cgi?id=15887](https://sourceware.org/bugzilla/attachment.cgi?id=15887)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=32576](https://sourceware.org/bugzilla/show_bug.cgi?id=32576)\n- [https://vuldb.com/?ctiid.295056](https://vuldb.com/?ctiid.295056)\n- [https://vuldb.com/?id.295056](https://vuldb.com/?id.295056)\n- [https://www.gnu.org/](https://www.gnu.org/)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-401",
+                  "CWE-404",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 3.7,
+                "security-severity": "3.7"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-COREUTILS-6727355",
+              "shortDescription": {
+                "text": "Low severity - Improper Input Validation vulnerability in coreutils"
+              },
+              "fullDescription": {
+                "text": "(CVE-2016-2781) coreutils@9.4-3ubuntu6.2"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `coreutils` package and not the `coreutils` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nchroot in GNU coreutils, when used with --userspec, allows local users to escape to the parent session via a crafted TIOCSTI ioctl call, which pushes characters to the terminal&#39;s input buffer.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `coreutils`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2016-2781](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2016-2781)\n- [https://security-tracker.debian.org/tracker/CVE-2016-2781](https://security-tracker.debian.org/tracker/CVE-2016-2781)\n- [https://lists.apache.org/thread.html/rf9fa47ab66495c78bb4120b0754dd9531ca2ff0430f6685ac9b07772@%3Cdev.mina.apache.org%3E](https://lists.apache.org/thread.html/rf9fa47ab66495c78bb4120b0754dd9531ca2ff0430f6685ac9b07772@%3Cdev.mina.apache.org%3E)\n- [http://www.openwall.com/lists/oss-security/2016/02/28/2](http://www.openwall.com/lists/oss-security/2016/02/28/2)\n- [http://www.openwall.com/lists/oss-security/2016/02/28/3](http://www.openwall.com/lists/oss-security/2016/02/28/3)\n- [https://lists.apache.org/thread.html/rf9fa47ab66495c78bb4120b0754dd9531ca2ff0430f6685ac9b07772%40%3Cdev.mina.apache.org%3E](https://lists.apache.org/thread.html/rf9fa47ab66495c78bb4120b0754dd9531ca2ff0430f6685ac9b07772%40%3Cdev.mina.apache.org%3E)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-20",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 6.5,
+                "security-severity": "6.5"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-EXPAT-14155451",
+              "shortDescription": {
+                "text": "Medium severity - Algorithmic Complexity vulnerability in expat"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-66382) expat/libexpat1@2.6.1-2ubuntu0.4"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `expat` package and not the `expat` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nIn libexpat through 2.7.3, a crafted file with an approximate size of 2 MiB can lead to dozens of seconds of processing time.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `expat`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-66382](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-66382)\n- [https://github.com/libexpat/libexpat/issues/1076](https://github.com/libexpat/libexpat/issues/1076)\n- [http://www.openwall.com/lists/oss-security/2025/12/02/1](http://www.openwall.com/lists/oss-security/2025/12/02/1)\n- [https://cert-portal.siemens.com/productcert/html/ssa-082556.html](https://cert-portal.siemens.com/productcert/html/ssa-082556.html)\n- [https://cert-portal.siemens.com/productcert/html/ssa-253495.html](https://cert-portal.siemens.com/productcert/html/ssa-253495.html)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-407",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 5.5,
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-GLIBC-15804597",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2026-4437 vulnerability in glibc"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-4437) glibc/libc-bin@2.39-0ubuntu8.7"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `glibc` package and not the `glibc` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nCalling gethostbyaddr or gethostbyaddr_r with a configured nsswitch.conf that specifies the library&#39;s DNS backend in the GNU C Library version 2.34 to version 2.43 could, with a crafted response from the configured DNS server, result in a violation of the DNS specification that causes the application to treat a non-answer section of the DNS response as a valid answer.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `glibc`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-4437](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-4437)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=34014](https://sourceware.org/bugzilla/show_bug.cgi?id=34014)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-GLIBC-15804816",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2026-4438 vulnerability in glibc"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-4438) glibc/libc-bin@2.39-0ubuntu8.7"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `glibc` package and not the `glibc` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nCalling gethostbyaddr or gethostbyaddr_r with a configured nsswitch.conf that specifies the library&#39;s DNS backend in the GNU C library version 2.34 to version 2.43 could result in an invalid DNS hostname being returned to the caller in violation of the DNS specification.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `glibc`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-4438](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-4438)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=34015](https://sourceware.org/bugzilla/show_bug.cgi?id=34015)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-GLIBC-15884040",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2026-4046 vulnerability in glibc"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-4046) glibc/libc-bin@2.39-0ubuntu8.7"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `glibc` package and not the `glibc` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nThe iconv() function in the GNU C Library versions 2.43 and earlier may crash due to an assertion failure when converting inputs from the IBM1390 or IBM1399 character sets, which may be used to remotely crash an application.\n\n\n\nThis vulnerability can be trivially mitigated by removing the IBM1390 and IBM1399 character sets from systems that do not need them.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `glibc`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-4046](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-4046)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=33980](https://sourceware.org/bugzilla/show_bug.cgi?id=33980)\n- [https://sourceware.org/git/?p=glibc.git;a=blob_plain;f=advisories/GLIBC-SA-2026-0007;hb=HEAD](https://sourceware.org/git/?p=glibc.git;a=blob_plain;f=advisories/GLIBC-SA-2026-0007;hb=HEAD)\n- [https://inbox.sourceware.org/libc-announce/76814edf-cf7f-47ec-979d-2dce0a2c76bf@gotplt.org/T/#u](https://inbox.sourceware.org/libc-announce/76814edf-cf7f-47ec-979d-2dce0a2c76bf@gotplt.org/T/#u)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-GLIBC-16338129",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2026-6238 vulnerability in glibc"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-6238) glibc/libc-bin@2.39-0ubuntu8.7"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `glibc` package and not the `glibc` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nThe deprecated functions ns_printrrf, ns_printrr and fp_nquery in the GNU C Library version 2.2 and newer fail to validate the RDATA content against the RDATA length in a DNS response when processing LOC, CERT, TKEY or TSIG records, which may allow an attacker to craft a DNS response, causing a target application to crash or read uninitialized memory.\n\nThese functions are for application debugging only and hence not in the path of code executed by the DNS resolver.  Further, they have been deprecated since version 2.34 and should not be used by any new applications.  Applications should consider porting away from these interfaces since they may be removed in future versions.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `glibc`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-6238](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-6238)\n- [https://inbox.sourceware.org/libc-announce/7a655d55-276f-41fe-b550-feb3ebb2ce91@redhat.com/T/#u](https://inbox.sourceware.org/libc-announce/7a655d55-276f-41fe-b550-feb3ebb2ce91@redhat.com/T/#u)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=34069](https://sourceware.org/bugzilla/show_bug.cgi?id=34069)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-GLIBC-16338217",
+              "shortDescription": {
+                "text": "Medium severity - CVE-2026-5435 vulnerability in glibc"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-5435) glibc/libc-bin@2.39-0ubuntu8.7"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `glibc` package and not the `glibc` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nThe deprecated functions ns_printrrf, ns_printrr and fp_nquery in the GNU C Library version 2.2 and newer fail to enforce the caller-supplied buffer length, and can result in an out-of-bounds write when printing TSIG records.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `glibc`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-5435](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-5435)\n- [https://inbox.sourceware.org/libc-announce/7a655d55-276f-41fe-b550-feb3ebb2ce91@redhat.com/T/#u](https://inbox.sourceware.org/libc-announce/7a655d55-276f-41fe-b550-feb3ebb2ce91@redhat.com/T/#u)\n- [https://sourceware.org/bugzilla/show_bug.cgi?id=34033](https://sourceware.org/bugzilla/show_bug.cgi?id=34033)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-GNUPG2-14849569",
+              "shortDescription": {
+                "text": "Medium severity - Improper Verification of Cryptographic Signature vulnerability in gnupg2"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-68972) gnupg2/gpgv@2.4.4-2ubuntu17.4"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `gnupg2` package and not the `gnupg2` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nIn GnuPG through 2.4.8, if a signed message has \\f at the end of a plaintext line, an adversary can construct a modified message that places additional text after the signed material, such that signature verification of the modified message succeeds (although an &#34;invalid armor&#34; message is printed during verification). This is related to use of \\f as a marker to denote truncation of a long plaintext line.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `gnupg2`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-68972](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-68972)\n- [https://media.ccc.de/v/39c3-to-sign-or-not-to-sign-practical-vulnerabilities-i](https://media.ccc.de/v/39c3-to-sign-or-not-to-sign-practical-vulnerabilities-i)\n- [https://news.ycombinator.com/item?id=46404339](https://news.ycombinator.com/item?id=46404339)\n- [https://gpg.fail/formfeed](https://gpg.fail/formfeed)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-347",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 4.7,
+                "security-severity": "4.7"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-GZIP-17740552",
+              "shortDescription": {
+                "text": "Medium severity - Buffer Over-read vulnerability in gzip"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-41992) gzip@1.12-1ubuntu3.1"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `gzip` package and not the `gzip` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nGNU gzip contains a global buffer overflow vulnerability in the LZH decompression logic caused by improper reuse of shared global state between different decompression formats within a single execution. GNU gzip maintains a global array that is shared across the LZ77, LZW, and LZH decompression routines and is not reinitialized between files processed in the same invocation.\nBy decompressing a specially crafted LZW file followed by a specially crafted LZH file in a single gzip -d command, an attacker can poison the shared global state and subsequently trigger an out‑of‑bounds read in the LZH decoder. The LZH decompression logic follows stale values left in the shared array, causing reads past the end of the allocated global buffer.\n\nThis issue has been fixed in the commit 63dbf6b3b9e6e781df1a6a64e609b10e23969681\n## Remediation\nUpgrade `Ubuntu:24.04` `gzip` to version 1.12-1ubuntu3.2 or higher.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-41992](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-41992)\n- [https://cert.pl/en/posts/2026/04/CVE-2026-41991/](https://cert.pl/en/posts/2026/04/CVE-2026-41991/)\n- [https://cgit.git.savannah.gnu.org/cgit/gzip.git/commit/?id=63dbf6b3b9e6e781df1a6a64e609b10e23969681](https://cgit.git.savannah.gnu.org/cgit/gzip.git/commit/?id=63dbf6b3b9e6e781df1a6a64e609b10e23969681)\n- [https://www.gnu.org/software/gzip/](https://www.gnu.org/software/gzip/)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-126",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-GZIP-17740553",
+              "shortDescription": {
+                "text": "Medium severity - Insecure Temporary File vulnerability in gzip"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-41991) gzip@1.12-1ubuntu3.1"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `gzip` package and not the `gzip` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nGNU gzip contains a vulnerability in the gzexe utility related to insecure temporary file handling. When the mktemp utility is not available in the user’s PATH, gzexe falls back to constructing a temporary file path based solely on the process ID (PID). This predictable filename is created without exclusive access or existence checks.\nA local attacker can pre‑create the predicted temporary file path as a symbolic link pointing to an arbitrary file writable by the victim. When gzexe runs, it follows the symlink and overwrites the target file, resulting in a time‑of‑check to time‑of‑use (TOCTOU) condition that allows arbitrary file overwrite.\n\nThis issue has been fixed in the commit 4e6f8b24ab823146ab8776f0b7fe486ab34d4269\n## Remediation\nUpgrade `Ubuntu:24.04` `gzip` to version 1.12-1ubuntu3.2 or higher.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-41991](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-41991)\n- [https://cert.pl/en/posts/2026/04/CVE-2026-41991/](https://cert.pl/en/posts/2026/04/CVE-2026-41991/)\n- [https://cgit.git.savannah.gnu.org/cgit/gzip.git/commit/?id=4e6f8b24ab823146ab8776f0b7fe486ab34d4269](https://cgit.git.savannah.gnu.org/cgit/gzip.git/commit/?id=4e6f8b24ab823146ab8776f0b7fe486ab34d4269)\n- [https://www.gnu.org/software/gzip/](https://www.gnu.org/software/gzip/)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-377",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-LIBGCRYPT20-6693674",
+              "shortDescription": {
+                "text": "Low severity - Covert Timing Channel vulnerability in libgcrypt20"
+              },
+              "fullDescription": {
+                "text": "(CVE-2024-2236) libgcrypt20@1.10.3-2ubuntu0.1"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `libgcrypt20` package and not the `libgcrypt20` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nA timing-based side-channel flaw was found in libgcrypt&#39;s RSA implementation. This issue may allow a remote attacker to initiate a Bleichenbacher-style attack, which can lead to the decryption of RSA ciphertexts.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `libgcrypt20`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2024-2236](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2024-2236)\n- [https://access.redhat.com/errata/RHSA-2024:9404](https://access.redhat.com/errata/RHSA-2024:9404)\n- [https://bugzilla.redhat.com/show_bug.cgi?id=2268268](https://bugzilla.redhat.com/show_bug.cgi?id=2268268)\n- [https://access.redhat.com/errata/RHSA-2025:3534](https://access.redhat.com/errata/RHSA-2025:3534)\n- [https://access.redhat.com/errata/RHSA-2025:3530](https://access.redhat.com/errata/RHSA-2025:3530)\n- [https://access.redhat.com/security/cve/CVE-2024-2236](https://access.redhat.com/security/cve/CVE-2024-2236)\n- [https://bugzilla.redhat.com/show_bug.cgi?id=2245218](https://bugzilla.redhat.com/show_bug.cgi?id=2245218)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-385",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-NCURSES-15754666",
+              "shortDescription": {
+                "text": "Low severity - Stack-based Buffer Overflow vulnerability in ncurses"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-69720) ncurses/libtinfo6@6.4+20240113-1ubuntu2"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `ncurses` package and not the `ncurses` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nThe infocmp command-line tool in ncurses before 6.5-20251213 has a stack-based buffer overflow in analyze_string in progs/infocmp.c.\n## Remediation\nUpgrade `Ubuntu:24.04` `ncurses` to version 6.4+20240113-1ubuntu2.1 or higher.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69720](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-69720)\n- [https://github.com/Cao-Wuhui/CVE-2025-69720](https://github.com/Cao-Wuhui/CVE-2025-69720)\n- [https://invisible-island.net/archives/ncurses/6.5/](https://invisible-island.net/archives/ncurses/6.5/)\n- [https://invisible-island.net/ncurses/](https://invisible-island.net/ncurses/)\n- [https://marc.info/?l=ncurses-bug&m=176539968328570&w=2](https://marc.info/?l=ncurses-bug&m=176539968328570&w=2)\n- [https://marc.info/?l=ncurses-bug&m=176540731801330&w=2](https://marc.info/?l=ncurses-bug&m=176540731801330&w=2)\n- [https://marc.info/?l=ncurses-bug&m=176545557728083&w=2](https://marc.info/?l=ncurses-bug&m=176545557728083&w=2)\n- [https://cert-portal.siemens.com/productcert/html/ssa-253495.html](https://cert-portal.siemens.com/productcert/html/ssa-253495.html)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-121",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 7.8,
+                "security-severity": "7.8"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-P11KIT-17740406",
+              "shortDescription": {
+                "text": "Medium severity - Uncontrolled Recursion vulnerability in p11-kit"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-13757) p11-kit/libp11-kit0@0.25.3-4ubuntu2.1"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `p11-kit` package and not the `p11-kit` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nA flaw was found in p11-kit. The RPC message attribute parsing functions p11_rpc_message_get_attribute() and p11_rpc_message_get_attribute_array_value() form a mutually-recursive call chain with no recursion depth limit when processing nested CKA_WRAP_TEMPLATE, CKA_UNWRAP_TEMPLATE, and CKA_DERIVE_TEMPLATE attributes. An unauthenticated attacker with local access to the p11-kit RPC Unix domain socket can send a specially crafted request with deeply nested template attributes, causing stack exhaustion and crashing the p11-kit server process and its dependent services.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `p11-kit`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-13757](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-13757)\n- [https://access.redhat.com/security/cve/CVE-2026-13757](https://access.redhat.com/security/cve/CVE-2026-13757)\n- [https://bugzilla.redhat.com/show_bug.cgi?id=2494556](https://bugzilla.redhat.com/show_bug.cgi?id=2494556)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-674",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 6.2,
+                "security-severity": "6.2"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-SHADOW-8600509",
+              "shortDescription": {
+                "text": "Low severity - CVE-2024-56433 vulnerability in shadow"
+              },
+              "fullDescription": {
+                "text": "(CVE-2024-56433) shadow/passwd@1:4.13+dfsg1-4ubuntu3.2"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `shadow` package and not the `shadow` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nshadow-utils (aka shadow) 4.4 through 4.17.0 establishes a default /etc/subuid behavior (e.g., uid 100000 through 165535 for the first user account) that can realistically conflict with the uids of users defined on locally administered networks, potentially leading to account takeover, e.g., by leveraging newuidmap for access to an NFS home directory (or same-host resources in the case of remote logins by these local network users). NOTE: it may also be argued that system administrators should not have assigned uids, within local networks, that are within the range that can occur in /etc/subuid.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `shadow`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2024-56433](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2024-56433)\n- [https://github.com/shadow-maint/shadow/blob/e2512d5741d4a44bdd81a8c2d0029b6222728cf0/etc/login.defs#L238-L241](https://github.com/shadow-maint/shadow/blob/e2512d5741d4a44bdd81a8c2d0029b6222728cf0/etc/login.defs#L238-L241)\n- [https://github.com/shadow-maint/shadow/issues/1157](https://github.com/shadow-maint/shadow/issues/1157)\n- [https://github.com/shadow-maint/shadow/releases/tag/4.4](https://github.com/shadow-maint/shadow/releases/tag/4.4)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-SYSTEMD-16062270",
+              "shortDescription": {
+                "text": "Low severity - Incorrect Resource Transfer Between Spheres vulnerability in systemd"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-40228) systemd/libsystemd0@255.4-1ubuntu8.16"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `systemd` package and not the `systemd` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nIn systemd 259, systemd-journald can send ANSI escape sequences to the terminals of arbitrary users when a &#34;logger -p emerg&#34; command is executed, if ForwardToWall=yes is set.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `systemd`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-40228](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-40228)\n- [https://www.openwall.com/lists/oss-security/2026/04/08/1](https://www.openwall.com/lists/oss-security/2026/04/08/1)\n- [http://www.openwall.com/lists/oss-security/2026/05/05/1](http://www.openwall.com/lists/oss-security/2026/05/05/1)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-669",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 3.3,
+                "security-severity": "3.3"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-TAR-10769052",
+              "shortDescription": {
+                "text": "Medium severity - Directory Traversal vulnerability in tar"
+              },
+              "fullDescription": {
+                "text": "(CVE-2025-45582) tar@1.35+dfsg-3build1"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `tar` package and not the `tar` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nGNU Tar through 1.35 allows file overwrite via directory traversal in crafted TAR archives, with a certain two-step process. First, the victim must extract an archive that contains a ../ symlink to a critical directory. Second, the victim must extract an archive that contains a critical file, specified via a relative pathname that begins with the symlink name and ends with that critical file&#39;s name. Here, the extraction follows the symlink and overwrites the critical file. This bypasses the protection mechanism of &#34;Member name contains &#39;..&#39;&#34; that would occur for a single TAR archive that attempted to specify the critical file via a ../ approach. For example, the first archive can contain &#34;x -&gt; ../../../../../home/victim/.ssh&#34; and the second archive can contain x/authorized_keys. This can affect server applications that automatically extract any number of user-supplied TAR archives, and were relying on the blocking of traversal. This can also affect software installation processes in which &#34;tar xf&#34; is run more than once (e.g., when installing a package can automatically install two dependencies that are set up as untrusted tarballs instead of official packages). NOTE: the official GNU Tar manual has an otherwise-empty directory for each &#34;tar xf&#34; in its Security Rules of Thumb; however, third-party advice leads users to run &#34;tar xf&#34; more than once into the same directory.\n## Remediation\nUpgrade `Ubuntu:24.04` `tar` to version 1.35+dfsg-3ubuntu0.2 or higher.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-45582](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2025-45582)\n- [https://github.com/i900008/vulndb/blob/main/Gnu_tar_vuln.md](https://github.com/i900008/vulndb/blob/main/Gnu_tar_vuln.md)\n- [https://www.gnu.org/software/tar/](https://www.gnu.org/software/tar/)\n- [https://lists.gnu.org/archive/html/bug-tar/2025-08/msg00012.html](https://lists.gnu.org/archive/html/bug-tar/2025-08/msg00012.html)\n- [https://www.gnu.org/software/tar/manual/html_node/Integrity.html](https://www.gnu.org/software/tar/manual/html_node/Integrity.html)\n- [https://www.gnu.org/software/tar/manual/html_node/Security-rules-of-thumb.html](https://www.gnu.org/software/tar/manual/html_node/Security-rules-of-thumb.html)\n- [http://www.openwall.com/lists/oss-security/2025/11/01/6](http://www.openwall.com/lists/oss-security/2025/11/01/6)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-24",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-TAR-15978865",
+              "shortDescription": {
+                "text": "Medium severity - Unrestricted Upload of File with Dangerous Type vulnerability in tar"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-5704) tar@1.35+dfsg-3build1"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `tar` package and not the `tar` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nA flaw was found in tar. A remote attacker could exploit this vulnerability by crafting a malicious archive, leading to hidden file injection with fully attacker-controlled content. This bypasses pre-extraction inspection mechanisms, potentially allowing an attacker to introduce malicious files onto a system without detection.\n## Remediation\nUpgrade `Ubuntu:24.04` `tar` to version 1.35+dfsg-3ubuntu0.1 or higher.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-5704](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-5704)\n- [https://access.redhat.com/security/cve/CVE-2026-5704](https://access.redhat.com/security/cve/CVE-2026-5704)\n- [https://bugzilla.redhat.com/show_bug.cgi?id=2455360](https://bugzilla.redhat.com/show_bug.cgi?id=2455360)\n- [http://www.openwall.com/lists/oss-security/2026/04/11/10](http://www.openwall.com/lists/oss-security/2026/04/11/10)\n- [http://www.openwall.com/lists/oss-security/2026/04/11/11](http://www.openwall.com/lists/oss-security/2026/04/11/11)\n- [http://www.openwall.com/lists/oss-security/2026/04/12/2](http://www.openwall.com/lists/oss-security/2026/04/12/2)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-434",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 5.5,
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-UTILLINUX-15926549",
+              "shortDescription": {
+                "text": "Medium severity - Time-of-check Time-of-use (TOCTOU) vulnerability in util-linux"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-27456) util-linux/libuuid1@2.39.3-9ubuntu6.5"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `util-linux` package and not the `util-linux` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nutil-linux is a random collection of Linux utilities. Prior to version 2.41.4, a TOCTOU (Time-of-Check-Time-of-Use) vulnerability has been identified in the SUID binary /usr/bin/mount from util-linux. The mount binary, when setting up loop devices, validates the source file path with user privileges via fork() + setuid() + realpath(), but subsequently re-canonicalizes and opens it with root privileges (euid=0) without verifying that the path has not been replaced between both operations. Neither O_NOFOLLOW, nor inode comparison, nor post-open fstat() are employed. This allows a local unprivileged user to replace the source file with a symlink pointing to any root-owned file or device during the race window, causing the SUID binary to open and mount it as root. Exploitation requires an /etc/fstab entry with user,loop options whose path points to a directory where the attacker has write permission, and that /usr/bin/mount has the SUID bit set (the default configuration on virtually all Linux distributions). The impact is unauthorized read access to root-protected files and block devices, including backup images, disk volumes, and any file containing a valid filesystem. This issue has been patched in version 2.41.4.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `util-linux`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-27456](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-27456)\n- [https://github.com/util-linux/util-linux/commit/5e390467b26a3cf3fecc04e1a0d482dff3162fc4](https://github.com/util-linux/util-linux/commit/5e390467b26a3cf3fecc04e1a0d482dff3162fc4)\n- [https://github.com/util-linux/util-linux/releases/tag/v2.41.4](https://github.com/util-linux/util-linux/releases/tag/v2.41.4)\n- [https://github.com/util-linux/util-linux/security/advisories/GHSA-qq4x-vfq4-9h9g](https://github.com/util-linux/util-linux/security/advisories/GHSA-qq4x-vfq4-9h9g)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-367",
+                  "deb"
+                ],
+                "cvssv3_baseScore": null,
+                "security-severity": "null"
+              }
+            },
+            {
+              "id": "SNYK-UBUNTU2404-ZLIB-15354586",
+              "shortDescription": {
+                "text": "Low severity - Improper Validation of Specified Quantity in Input vulnerability in zlib"
+              },
+              "fullDescription": {
+                "text": "(CVE-2026-27171) zlib/zlib1g@1:1.3.dfsg-3.1ubuntu2.1"
+              },
+              "help": {
+                "text": "",
+                "markdown": "## NVD Description\n**_Note:_** _Versions mentioned in the description apply only to the upstream `zlib` package and not the `zlib` package as distributed by `Ubuntu`._\n_See `How to fix?` for `Ubuntu:24.04` relevant fixed versions and status._\n\nzlib before 1.3.2 allows CPU consumption via crc32_combine64 and crc32_combine_gen64 because x2nmodp can do right shifts within a loop that has no termination condition.\n## Remediation\nThere is no fixed version for `Ubuntu:24.04` `zlib`.\n## References\n- [http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-27171](http://people.ubuntu.com/~ubuntu-security/cve/CVE-2026-27171)\n- [https://7asecurity.com/blog/2026/02/zlib-7asecurity-audit/](https://7asecurity.com/blog/2026/02/zlib-7asecurity-audit/)\n- [https://github.com/madler/zlib/releases/tag/v1.3.2](https://github.com/madler/zlib/releases/tag/v1.3.2)\n- [https://ostif.org/zlib-audit-complete/](https://ostif.org/zlib-audit-complete/)\n- [https://github.com/madler/zlib/issues/904](https://github.com/madler/zlib/issues/904)\n- [https://7asecurity.com/reports/pentest-report-zlib-RC1.1.pdf](https://7asecurity.com/reports/pentest-report-zlib-RC1.1.pdf)\n"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "CWE-1284",
+                  "deb"
+                ],
+                "cvssv3_baseScore": 5.5,
+                "security-severity": "5.5"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-13570212",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-15440796",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-15440858",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-15440868",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-15440947",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-15440987",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-15444964",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-15444976",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-6725747",
+          "level": "note",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a low severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-BINUTILS-8707711",
+          "level": "note",
+          "message": {
+            "text": "This file introduces a vulnerable binutils package with a low severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "binutils@2.42-4ubuntu2.10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-COREUTILS-6727355",
+          "level": "note",
+          "message": {
+            "text": "This file introduces a vulnerable coreutils package with a low severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "coreutils@9.4-3ubuntu6.2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-EXPAT-14155451",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable expat package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "expat@2.6.1-2ubuntu0.4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-GLIBC-15804597",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable glibc package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "glibc@2.39-0ubuntu8.7"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-GLIBC-15804816",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable glibc package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "glibc@2.39-0ubuntu8.7"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-GLIBC-15884040",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable glibc package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "glibc@2.39-0ubuntu8.7"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-GLIBC-16338129",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable glibc package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "glibc@2.39-0ubuntu8.7"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-GLIBC-16338217",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable glibc package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "glibc@2.39-0ubuntu8.7"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-GNUPG2-14849569",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable gnupg2 package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "gnupg2@2.4.4-2ubuntu17.4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-GZIP-17740552",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable gzip package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "gzip@1.12-1ubuntu3.1"
+                }
+              ]
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "Upgrade to gzip@1.12-1ubuntu3.2"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "fistpipeline_v1.0"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "startLine": 1
+                      },
+                      "insertedContent": {
+                        "text": "gzip@1.12-1ubuntu3.2"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-GZIP-17740553",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable gzip package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "gzip@1.12-1ubuntu3.1"
+                }
+              ]
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "Upgrade to gzip@1.12-1ubuntu3.2"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "fistpipeline_v1.0"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "startLine": 1
+                      },
+                      "insertedContent": {
+                        "text": "gzip@1.12-1ubuntu3.2"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-LIBGCRYPT20-6693674",
+          "level": "note",
+          "message": {
+            "text": "This file introduces a vulnerable libgcrypt20 package with a low severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "libgcrypt20@1.10.3-2ubuntu0.1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-NCURSES-15754666",
+          "level": "note",
+          "message": {
+            "text": "This file introduces a vulnerable ncurses package with a low severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ncurses@6.4+20240113-1ubuntu2"
+                }
+              ]
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "Upgrade to ncurses/libtinfo6@6.4+20240113-1ubuntu2.1"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "fistpipeline_v1.0"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "startLine": 1
+                      },
+                      "insertedContent": {
+                        "text": "ncurses/libtinfo6@6.4+20240113-1ubuntu2.1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-P11KIT-17740406",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable p11-kit package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "p11-kit@0.25.3-4ubuntu2.1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-SHADOW-8600509",
+          "level": "note",
+          "message": {
+            "text": "This file introduces a vulnerable shadow package with a low severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "shadow@1:4.13+dfsg1-4ubuntu3.2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-SYSTEMD-16062270",
+          "level": "note",
+          "message": {
+            "text": "This file introduces a vulnerable systemd package with a low severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "systemd@255.4-1ubuntu8.16"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-TAR-10769052",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable tar package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "tar@1.35+dfsg-3build1"
+                }
+              ]
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "Upgrade to tar@1.35+dfsg-3ubuntu0.2"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "fistpipeline_v1.0"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "startLine": 1
+                      },
+                      "insertedContent": {
+                        "text": "tar@1.35+dfsg-3ubuntu0.2"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-TAR-15978865",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable tar package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "tar@1.35+dfsg-3build1"
+                }
+              ]
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "Upgrade to tar@1.35+dfsg-3ubuntu0.1"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "fistpipeline_v1.0"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "startLine": 1
+                      },
+                      "insertedContent": {
+                        "text": "tar@1.35+dfsg-3ubuntu0.1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-UTILLINUX-15926549",
+          "level": "warning",
+          "message": {
+            "text": "This file introduces a vulnerable util-linux package with a medium severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "util-linux@2.39.3-9ubuntu6.5"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "SNYK-UBUNTU2404-ZLIB-15354586",
+          "level": "note",
+          "message": {
+            "text": "This file introduces a vulnerable zlib package with a low severity vulnerability."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fistpipeline_v1.0"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "zlib@1:1.3.dfsg-3.1ubuntu2.1"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "automationDetails": {
+        "id": "Snyk/Container/docker-image|fistpipeline/0/2026-07-15T10:51:53.223Z"
+      }
+    },
+    {
+      "tool": {
+        "driver": {
+          "name": "Snyk Container",
+          "semanticVersion": "1.1306.0",
+          "version": "1.1306.0",
+          "informationUri": "https://docs.snyk.io/",
+          "properties": {
+            "artifactsScanned": 0
+          },
+          "rules": []
+        }
+      },
+      "results": [],
+      "automationDetails": {
+        "id": "Snyk/Container/fistpipeline:v1.0:/usr/local/tomcat/webapps/1/2026-07-15T10:51:53.223Z"
+      }
+    },
+    {
+      "tool": {
+        "driver": {
+          "name": "Snyk Container",
+          "semanticVersion": "1.1306.0",
+          "version": "1.1306.0",
+          "informationUri": "https://docs.snyk.io/",
+          "properties": {
+            "artifactsScanned": 2
+          },
+          "rules": []
+        }
+      },
+      "results": [],
+      "automationDetails": {
+        "id": "Snyk/Container/fistpipeline:v1.0:/usr/local/tomcat/bin/2/2026-07-15T10:51:53.223Z"
+      }
+    },
+    {
+      "tool": {
+        "driver": {
+          "name": "Snyk Container",
+          "semanticVersion": "1.1306.0",
+          "version": "1.1306.0",
+          "informationUri": "https://docs.snyk.io/",
+          "properties": {
+            "artifactsScanned": 33
+          },
+          "rules": []
+        }
+      },
+      "results": [],
+      "automationDetails": {
+        "id": "Snyk/Container/fistpipeline:v1.0:/usr/local/tomcat/lib/3/2026-07-15T10:51:53.223Z"
+      }
+    },
+    {
+      "tool": {
+        "driver": {
+          "name": "Snyk Container",
+          "semanticVersion": "1.1306.0",
+          "version": "1.1306.0",
+          "informationUri": "https://docs.snyk.io/",
+          "properties": {
+            "artifactsScanned": 0
+          },
+          "rules": []
+        }
+      },
+      "results": [],
+      "automationDetails": {
+        "id": "Snyk/Container/fistpipeline:v1.0:/usr/local/tomcat/webapps.dist/docs/appdev/sample/4/2026-07-15T10:51:53.223Z"
+      }
+    },
+    {
+      "tool": {
+        "driver": {
+          "name": "Snyk Container",
+          "semanticVersion": "1.1306.0",
+          "version": "1.1306.0",
+          "informationUri": "https://docs.snyk.io/",
+          "properties": {
+            "artifactsScanned": 2
+          },
+          "rules": []
+        }
+      },
+      "results": [],
+      "automationDetails": {
+        "id": "Snyk/Container/fistpipeline:v1.0:/usr/local/tomcat/webapps.dist/examples/WEB-INF/lib/5/2026-07-15T10:51:53.223Z"
+      }
+    },
+    {
+      "tool": {
+        "driver": {
+          "name": "Snyk Container",
+          "semanticVersion": "1.1306.0",
+          "version": "1.1306.0",
+          "informationUri": "https://docs.snyk.io/",
+          "properties": {
+            "artifactsScanned": 0
+          },
+          "rules": []
+        }
+      },
+      "results": [],
+      "automationDetails": {
+        "id": "Snyk/Container/fistpipeline:v1.0:/opt/java/openjdk/lib/6/2026-07-15T10:51:53.224Z"
+      }
+    }
+  ]
+}
