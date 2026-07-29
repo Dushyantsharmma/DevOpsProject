@@ -168,11 +168,10 @@ pipeline {
             steps {
                 script {
                     sh 'rm -f zap-report.html || true'
+                    sh 'chmod -R 777 ${WORKSPACE}'
                    
                     sh """
                         docker run --rm \\
-                          --user \$(id -u):\$(id -g) \\
-                          -e HOME=/zap/wrk \\
                           --network host \\
                           -v \${WORKSPACE}:/zap/wrk:rw \\
                           -w /zap/wrk \\
