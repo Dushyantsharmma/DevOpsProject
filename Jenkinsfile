@@ -53,8 +53,17 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 echo "Running OWASP Dependency Check..."
-                dependencyCheck additionalArguments: '--scan ./ --format XML --out .', odcInstallation: 'dp-check'
+                dependencyCheck additionalArguments: '''
+                    --scan ./
+                    --format HTML
+                    --format XML
+                    --out .
+                    --prettyPrint
+                ''', odcInstallation: 'dp-check'
+               
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+               
+                archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', fingerprint: true
             }
         }
        
@@ -80,12 +89,25 @@ pipeline {
             steps {
                 sh """
                 mkdir -p /var/lib/jenkins/trivy-temp
+               
+                # Generate Table (TXT) report
                 TMPDIR=/var/lib/jenkins/trivy-temp \
                 trivy image --skip-version-check --severity HIGH,CRITICAL \
                     --format table --output trivy-report.txt --no-progress \
                     ${IMAGE_NAME}:${BUILD_NUMBER}
+               
+                # Generate HTML report (professional)
+                TMPDIR=/var/lib/jenkins/trivy-temp \
+                trivy image --skip-version-check --severity HIGH,CRITICAL \
+                    --format template --template "@contrib/html.tpl" \
+                    --output trivy-report.html --no-progress \
+                    ${IMAGE_NAME}:${BUILD_NUMBER} || \
+                trivy image --skip-version-check --severity HIGH,CRITICAL \
+                    --format json --output trivy-report.json --no-progress \
+                    ${IMAGE_NAME}:${BUILD_NUMBER}
                 """
-                archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
+               
+                archiveArtifacts artifacts: 'trivy-report.txt,trivy-report.html,trivy-report.json', allowEmptyArchive: true, fingerprint: true
             }
         }
        
@@ -137,7 +159,7 @@ pipeline {
                 subject: "✅ Deployment Successful #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
                 mimeType: 'text/html',
                 attachLog: false,
-                attachmentsPattern: 'trivy-report.txt,**/dependency-check-report.xml',
+                attachmentsPattern: 'trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml',
                 to: '227dushyantsharma@gmail.com',
                 body: '''
                 <!DOCTYPE html>
@@ -156,6 +178,7 @@ pipeline {
                         .success { background-color: #28a745; }
                         .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; border-top: 1px solid #eee; }
                         a { color: #007bff; text-decoration: none; }
+                        .report-box { background: #f8f9fa; border-left: 4px solid #28a745; padding: 15px 20px; margin: 20px 0; border-radius: 0 6px 6px 0; }
                     </style>
                 </head>
                 <body>
@@ -203,15 +226,21 @@ pipeline {
                                 <li>✅ Rollout Verification</li>
                             </ul>
                            
-                            <p><strong>Security Reports attached:</strong></p>
-                            <ul>
-                                <li>Trivy Image Scan Report</li>
-                                <li>OWASP Dependency-Check Report</li>
-                            </ul>
+                            <div class="report-box">
+                                <h3 style="margin-top:0;">📎 Security Reports Attached</h3>
+                                <ul style="margin-bottom:0;">
+                                    <li><strong>Trivy Image Scan</strong> → trivy-report.html + trivy-report.txt</li>
+                                    <li><strong>OWASP Dependency-Check</strong> → dependency-check-report.html + dependency-check-report.xml</li>
+                                </ul>
+                            </div>
+                           
+                            <p style="color:#555; font-size:14px;">
+                                Please review the attached HTML reports for detailed vulnerability findings.
+                            </p>
                         </div>
                         <div class="footer">
-                            <p>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP</p>
-                            <p>DevOps CI/CD Pipeline • This is an automated notification. Please do not reply.</p>
+                            <p><strong>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP</strong></p>
+                            <p>DevSecOps CI/CD Pipeline • Automated Notification</p>
                         </div>
                     </div>
                 </body>
@@ -225,7 +254,7 @@ pipeline {
                 subject: "❌ BUILD FAILED #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
                 mimeType: 'text/html',
                 attachLog: true,
-                attachmentsPattern: 'trivy-report.txt,**/dependency-check-report.xml',
+                attachmentsPattern: 'trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml',
                 to: '227dushyantsharma@gmail.com',
                 body: '''
                 <!DOCTYPE html>
@@ -265,11 +294,11 @@ pipeline {
                                 <tr><th>Build URL</th><td><a href="${env.BUILD_URL}" target="_blank">${env.BUILD_URL}</a></td></tr>
                             </table>
                            
-                            <p><strong>Build has failed.</strong> Please check the attached build log and security reports (if generated) for details.</p>
+                            <p><strong>Build has failed.</strong> Please check the attached build log and any available security reports for details.</p>
                         </div>
                         <div class="footer">
-                            <p>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP</p>
-                            <p>DevOps CI/CD Pipeline • Automated Notification</p>
+                            <p><strong>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP</strong></p>
+                            <p>DevSecOps CI/CD Pipeline • Automated Notification</p>
                         </div>
                     </div>
                 </body>
