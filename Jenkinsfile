@@ -185,7 +185,6 @@ pipeline {
 
                     sh """
                         docker run --rm \\
-                          --network host \\
                           -v \${WORKSPACE}:/zap/wrk:rw \\
                           -w /zap/wrk \\
                           ghcr.io/zaproxy/zaproxy:stable \\
