@@ -66,31 +66,11 @@ pipeline {
                             --prettyPrint
                             --data /var/lib/jenkins/dependency-check-data
                             --noupdate
-                            --disableYarnAudit
-                            --disableNodeAudit
-                            --disableNodeJS
-                            --disablePnpmAudit
-                            --disableRubygems
-                            --disableBundleAudit
-                            --disablePyPi
-                            --disablePip
-                            --disableComposer
-                            --disableNugetconf
-                            --disableAssembly
-                            --disableMSBuild
-                            --disableCmake
-                            --disableAutoconf
-                            --disableOpenSSL
-                            --disableCocoapods
-                            --disableSwift
-                            --disableCarthage
-                            --disableHex
-                            --disableGoMod
                         """
                     )
                    
                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                    archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', fingerprint: true
+                    archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', fingerprint: true, allowEmptyArchive: true
                 }
             }
         }
@@ -98,7 +78,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    sh "mvn sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY}"
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY}'
                 }
             }
         }
@@ -118,13 +98,11 @@ pipeline {
                 sh """
                 mkdir -p /var/lib/jenkins/trivy-temp
                
-                # Generate Table (TXT) report
                 TMPDIR=/var/lib/jenkins/trivy-temp \
                 trivy image --skip-version-check --severity HIGH,CRITICAL \
                     --format table --output trivy-report.txt --no-progress \
                     ${IMAGE_NAME}:${BUILD_NUMBER}
                
-                # Try HTML report, fallback to JSON
                 TMPDIR=/var/lib/jenkins/trivy-temp \
                 trivy image --skip-version-check --severity HIGH,CRITICAL \
                     --format template --template "@contrib/html.tpl" \
@@ -245,7 +223,7 @@ pipeline {
                             <ul>
                                 <li>✅ Source Code Checkout</li>
                                 <li>✅ Maven Build & Packaging</li>
-                                <li>✅ OWASP Dependency Check (Cached / No Update)</li>
+                                <li>✅ OWASP Dependency Check</li>
                                 <li>✅ SonarQube Code Quality Analysis</li>
                                 <li>✅ Docker Image Build</li>
                                 <li>✅ Trivy Security Scan</li>
@@ -261,10 +239,6 @@ pipeline {
                                     <li><strong>OWASP Dependency-Check</strong> → dependency-check-report.html + dependency-check-report.xml</li>
                                 </ul>
                             </div>
-                           
-                            <p style="color:#555; font-size:14px;">
-                                Please review the attached HTML reports for detailed vulnerability findings.
-                            </p>
                         </div>
                         <div class="footer">
                             <p><strong>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP</strong></p>
