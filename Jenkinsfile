@@ -169,10 +169,10 @@ pipeline {
                 script {
                     sh 'rm -f zap-report.html || true'
                    
-                    // Fixed version - avoids permission denied
                     sh """
                         docker run --rm \\
                           --user \$(id -u):\$(id -g) \\
+                          -e HOME=/zap/wrk \\
                           --network host \\
                           -v \${WORKSPACE}:/zap/wrk:rw \\
                           -w /zap/wrk \\
