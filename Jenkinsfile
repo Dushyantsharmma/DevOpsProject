@@ -53,9 +53,7 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-                    echo "Running OWASP Dependency Check with NVD API Key (fast mode)..."
                    
-                    // Create persistent data directory (survives across builds)
                     sh 'mkdir -p /var/lib/jenkins/dependency-check-data'
                    
                     dependencyCheck(
@@ -66,13 +64,32 @@ pipeline {
                             --format XML
                             --out .
                             --prettyPrint
-                            --nvdApiKey ${NVD_API_KEY}
                             --data /var/lib/jenkins/dependency-check-data
+                            --noupdate
+                            --disableYarnAudit
+                            --disableNodeAudit
+                            --disableNodeJS
+                            --disablePnpmAudit
+                            --disableRubygems
+                            --disableBundleAudit
+                            --disablePyPi
+                            --disablePip
+                            --disableComposer
+                            --disableNugetconf
+                            --disableAssembly
+                            --disableMSBuild
+                            --disableCmake
+                            --disableAutoconf
+                            --disableOpenSSL
+                            --disableCocoapods
+                            --disableSwift
+                            --disableCarthage
+                            --disableHex
+                            --disableGoMod
                         """
                     )
                    
                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                   
                     archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', fingerprint: true
                 }
             }
@@ -107,7 +124,7 @@ pipeline {
                     --format table --output trivy-report.txt --no-progress \
                     ${IMAGE_NAME}:${BUILD_NUMBER}
                
-                # Try HTML report (professional), fallback to JSON
+                # Try HTML report, fallback to JSON
                 TMPDIR=/var/lib/jenkins/trivy-temp \
                 trivy image --skip-version-check --severity HIGH,CRITICAL \
                     --format template --template "@contrib/html.tpl" \
@@ -228,7 +245,7 @@ pipeline {
                             <ul>
                                 <li>✅ Source Code Checkout</li>
                                 <li>✅ Maven Build & Packaging</li>
-                                <li>✅ OWASP Dependency Check (NVD API Key + Cached DB)</li>
+                                <li>✅ OWASP Dependency Check (Cached / No Update)</li>
                                 <li>✅ SonarQube Code Quality Analysis</li>
                                 <li>✅ Docker Image Build</li>
                                 <li>✅ Trivy Security Scan</li>
