@@ -169,7 +169,20 @@ pipeline {
                 script {
                     sh 'rm -f zap-report.html || true'
                     sh 'chmod -R 777 ${WORKSPACE}'
-                   
+
+                    // Wait until the app actually responds before scanning
+                    sh """
+                        echo "=== Waiting for application to be ready ==="
+                        for i in \$(seq 1 15); do
+                            if curl -s -o /dev/null -w "%{http_code}" ${params.APP_URL} | grep -q "200\\|301\\|302"; then
+                                echo "App is up!"
+                                break
+                            fi
+                            echo "Not ready yet, retrying in 5s... (\$i/15)"
+                            sleep 5
+                        done
+                    """
+
                     sh """
                         docker run --rm \\
                           --network host \\
