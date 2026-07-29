@@ -8,28 +8,28 @@ pipeline {
         SONARQUBE_SERVER = 'sonar'
         SONAR_PROJECT_KEY = 'DevOpsProject'
         SONAR_URL = 'http://65.0.81.202:9000/dashboard?id=DevOpsProject'
-       
+      
         // Docker
         IMAGE_NAME = 'fistpipeline'
         DOCKERHUB_REPO = 'dushyantsharmma/fistpipeline'
-       
+      
         // Kubernetes
         K8S_DEPLOYMENT = 'simple-webapp-deployment'
         K8S_NAMESPACE = 'default'
         CONTAINER_NAME = 'simple-webapp'
-       
-        // Replace with your actual Worker Public IP
-        APP_URL = 'http://43.204.22.117:30007'
-       
+      
+        // Application URL (update if needed)
+        APP_URL = 'http://13.233.158.165:30007'
+      
         // Environment
         DEPLOY_ENV = 'Production'
     }
-   
+  
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Dushyantsharmma/DevOpsProject.git'
-               
+              
                 script {
                     env.GIT_COMMIT_SHORT = sh(
                         script: 'git rev-parse --short HEAD',
@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-       
+      
         stage('Maven Build') {
             steps {
                 sh 'mvn clean package'
@@ -49,13 +49,13 @@ pipeline {
                 }
             }
         }
-       
+      
         stage('OWASP Dependency Check') {
             steps {
                 withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-                   
+                  
                     sh 'mkdir -p /var/lib/jenkins/dependency-check-data'
-                   
+                  
                     dependencyCheck(
                         odcInstallation: 'dp-check',
                         additionalArguments: """
@@ -68,13 +68,13 @@ pipeline {
                             --noupdate
                         """
                     )
-                   
+                  
                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
                     archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', fingerprint: true, allowEmptyArchive: true
                 }
             }
         }
-       
+      
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
@@ -82,7 +82,7 @@ pipeline {
                 }
             }
         }
-       
+      
         stage('Build Docker Image') {
             steps {
                 sh """
@@ -92,17 +92,17 @@ pipeline {
                 """
             }
         }
-       
+      
         stage('Trivy Image Scan') {
             steps {
                 sh """
                 mkdir -p /var/lib/jenkins/trivy-temp
-               
+              
                 TMPDIR=/var/lib/jenkins/trivy-temp \
                 trivy image --skip-version-check --severity HIGH,CRITICAL \
                     --format table --output trivy-report.txt --no-progress \
                     ${IMAGE_NAME}:${BUILD_NUMBER}
-               
+              
                 TMPDIR=/var/lib/jenkins/trivy-temp \
                 trivy image --skip-version-check --severity HIGH,CRITICAL \
                     --format template --template "@contrib/html.tpl" \
@@ -112,11 +112,11 @@ pipeline {
                     --format json --output trivy-report.json --no-progress \
                     ${IMAGE_NAME}:${BUILD_NUMBER}
                 """
-               
+              
                 archiveArtifacts artifacts: 'trivy-report.txt,trivy-report.html,trivy-report.json', allowEmptyArchive: true, fingerprint: true
             }
         }
-       
+      
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
@@ -129,23 +129,23 @@ pipeline {
                 }
             }
         }
-       
+      
         stage('Deploy to Kubernetes') {
             steps {
                 sh """
                 echo "=== Kubernetes Client Info ==="
                 kubectl version --client
                 kubectl config current-context
-               
+              
                 echo "=== Applying Base Manifest ==="
                 kubectl apply -f k8s-deployment.yml
-               
+              
                 echo "=== Updating Deployment Image ==="
                 kubectl set image deployment/${K8S_DEPLOYMENT} ${CONTAINER_NAME}=${DOCKERHUB_REPO}:${BUILD_NUMBER} -n ${K8S_NAMESPACE}
-               
+              
                 echo "=== Waiting for Rollout ==="
                 kubectl rollout status deployment/${K8S_DEPLOYMENT} -n ${K8S_NAMESPACE} --timeout=180s
-               
+              
                 echo "=== Deployment Status ==="
                 kubectl get deployments -n ${K8S_NAMESPACE}
                 echo "=== Pods ==="
@@ -157,15 +157,42 @@ pipeline {
                 """
             }
         }
+       
+        // ====================== NEW STAGE ======================
+        stage('OWASP ZAP Scan') {
+            steps {
+                script {
+                    // Remove old report if exists
+                    sh 'rm -f zap-report.html || true'
+                    
+                    // Run automated ZAP Baseline Scan
+                    sh """
+                        docker run --rm \\
+                          --network host \\
+                          -v \${WORKSPACE}:/zap/wrk/:rw \\
+                          -w /zap/wrk \\
+                          ghcr.io/zaproxy/zaproxy:stable \\
+                          zap-baseline.py \\
+                          -t ${APP_URL} \\
+                          -r zap-report.html \\
+                          -I
+                    """
+                }
+                
+                // Archive report for Jenkins + Email
+                archiveArtifacts artifacts: 'zap-report.html', fingerprint: true, allowEmptyArchive: true
+            }
+        }
+        // =======================================================
     }
-   
+  
     post {
         success {
             emailext (
                 subject: "✅ Deployment Successful #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
                 mimeType: 'text/html',
                 attachLog: false,
-                attachmentsPattern: 'trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml',
+                attachmentsPattern: 'trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml,zap-report.html',
                 to: '227dushyantsharma@gmail.com',
                 body: '''
                 <!DOCTYPE html>
@@ -195,7 +222,7 @@ pipeline {
                         </div>
                         <div class="content">
                             <p><strong>Status:</strong> <span class="status success">SUCCESS</span></p>
-                           
+                          
                             <table>
                                 <tr><th>Project</th><td>${env.JOB_NAME}</td></tr>
                                 <tr><th>Build Number</th><td>#${env.BUILD_NUMBER}</td></tr>
@@ -218,7 +245,7 @@ pipeline {
                                 <tr><th>SonarQube Report</th><td><a href="${SONAR_URL}" target="_blank">View SonarQube Dashboard</a></td></tr>
                                 <tr><th>Build URL</th><td><a href="${env.BUILD_URL}" target="_blank">View Build Details in Jenkins</a></td></tr>
                             </table>
-                           
+                          
                             <h3>Pipeline Stages</h3>
                             <ul>
                                 <li>✅ Source Code Checkout</li>
@@ -229,19 +256,20 @@ pipeline {
                                 <li>✅ Trivy Security Scan</li>
                                 <li>✅ Push to Docker Hub</li>
                                 <li>✅ Deploy to Kubernetes</li>
-                                <li>✅ Rollout Verification</li>
+                                <li>✅ OWASP ZAP Baseline Scan</li>
                             </ul>
-                           
+                          
                             <div class="report-box">
                                 <h3 style="margin-top:0;">📎 Security Reports Attached</h3>
                                 <ul style="margin-bottom:0;">
                                     <li><strong>Trivy Image Scan</strong> → trivy-report.html + trivy-report.txt</li>
                                     <li><strong>OWASP Dependency-Check</strong> → dependency-check-report.html + dependency-check-report.xml</li>
+                                    <li><strong>OWASP ZAP</strong> → zap-report.html</li>
                                 </ul>
                             </div>
                         </div>
                         <div class="footer">
-                            <p><strong>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP</strong></p>
+                            <p><strong>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP • ZAP</strong></p>
                             <p>DevSecOps CI/CD Pipeline • Automated Notification</p>
                         </div>
                     </div>
@@ -250,13 +278,13 @@ pipeline {
                 '''
             )
         }
-       
+      
         failure {
             emailext (
                 subject: "❌ BUILD FAILED #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
                 mimeType: 'text/html',
                 attachLog: true,
-                attachmentsPattern: 'trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml',
+                attachmentsPattern: 'trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml,zap-report.html',
                 to: '227dushyantsharma@gmail.com',
                 body: '''
                 <!DOCTYPE html>
@@ -284,7 +312,7 @@ pipeline {
                         </div>
                         <div class="content">
                             <p><strong>Status:</strong> <span class="status">FAILED</span></p>
-                           
+                          
                             <table>
                                 <tr><th>Project</th><td>${env.JOB_NAME}</td></tr>
                                 <tr><th>Build Number</th><td>#${env.BUILD_NUMBER}</td></tr>
@@ -295,11 +323,11 @@ pipeline {
                                 <tr><th>Environment</th><td>${DEPLOY_ENV}</td></tr>
                                 <tr><th>Build URL</th><td><a href="${env.BUILD_URL}" target="_blank">${env.BUILD_URL}</a></td></tr>
                             </table>
-                           
+                          
                             <p><strong>Build has failed.</strong> Please check the attached build log and any available security reports for details.</p>
                         </div>
                         <div class="footer">
-                            <p><strong>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP</strong></p>
+                            <p><strong>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP • ZAP</strong></p>
                             <p>DevSecOps CI/CD Pipeline • Automated Notification</p>
                         </div>
                     </div>
