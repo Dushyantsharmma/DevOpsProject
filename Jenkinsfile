@@ -52,18 +52,29 @@ pipeline {
        
         stage('OWASP Dependency Check') {
             steps {
-                echo "Running OWASP Dependency Check..."
-                dependencyCheck additionalArguments: '''
-                    --scan ./
-                    --format HTML
-                    --format XML
-                    --out .
-                    --prettyPrint
-                ''', odcInstallation: 'dp-check'
-               
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-               
-                archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', fingerprint: true
+                withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
+                    echo "Running OWASP Dependency Check with NVD API Key (fast mode)..."
+                   
+                    // Create persistent data directory (survives across builds)
+                    sh 'mkdir -p /var/lib/jenkins/dependency-check-data'
+                   
+                    dependencyCheck(
+                        odcInstallation: 'dp-check',
+                        additionalArguments: """
+                            --scan .
+                            --format HTML
+                            --format XML
+                            --out .
+                            --prettyPrint
+                            --nvdApiKey ${NVD_API_KEY}
+                            --data /var/lib/jenkins/dependency-check-data
+                        """
+                    )
+                   
+                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                   
+                    archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', fingerprint: true
+                }
             }
         }
        
@@ -96,7 +107,7 @@ pipeline {
                     --format table --output trivy-report.txt --no-progress \
                     ${IMAGE_NAME}:${BUILD_NUMBER}
                
-                # Generate HTML report (professional)
+                # Try HTML report (professional), fallback to JSON
                 TMPDIR=/var/lib/jenkins/trivy-temp \
                 trivy image --skip-version-check --severity HIGH,CRITICAL \
                     --format template --template "@contrib/html.tpl" \
@@ -217,7 +228,7 @@ pipeline {
                             <ul>
                                 <li>✅ Source Code Checkout</li>
                                 <li>✅ Maven Build & Packaging</li>
-                                <li>✅ OWASP Dependency Check</li>
+                                <li>✅ OWASP Dependency Check (NVD API Key + Cached DB)</li>
                                 <li>✅ SonarQube Code Quality Analysis</li>
                                 <li>✅ Docker Image Build</li>
                                 <li>✅ Trivy Security Scan</li>
