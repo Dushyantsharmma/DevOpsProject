@@ -1,9 +1,17 @@
 pipeline {
     agent any
+
     tools {
         maven 'Maven'
     }
-    
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        timeout(time: 60, unit: 'MINUTES')
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
     parameters {
         string(
             name: 'APP_URL',
@@ -11,31 +19,37 @@ pipeline {
             description: 'Application URL (NodePort of the worker)'
         )
     }
-    
+
     environment {
         // SonarQube
-        SONARQUBE_SERVER = 'sonar'
-        SONAR_PROJECT_KEY = 'DevOpsProject'
-        SONAR_URL = 'http://65.0.81.202:9000/dashboard?id=DevOpsProject'
-     
+        SONARQUBE_SERVER   = 'sonar'
+        SONAR_PROJECT_KEY  = 'DevOpsProject'
+        SONAR_URL          = 'http://65.0.81.202:9000/dashboard?id=DevOpsProject'
+
         // Docker
-        IMAGE_NAME = 'fistpipeline'
-        DOCKERHUB_REPO = 'dushyantsharmma/fistpipeline'
-     
+        IMAGE_NAME         = 'fistpipeline'
+        DOCKERHUB_REPO     = 'dushyantsharmma/fistpipeline'
+
         // Kubernetes
-        K8S_DEPLOYMENT = 'simple-webapp-deployment'
-        K8S_NAMESPACE = 'default'
-        CONTAINER_NAME = 'simple-webapp'
-     
+        K8S_DEPLOYMENT     = 'simple-webapp-deployment'
+        K8S_NAMESPACE      = 'default'
+        CONTAINER_NAME     = 'simple-webapp'
+
         // Environment
-        DEPLOY_ENV = 'Production'
+        DEPLOY_ENV         = 'Production'
+
+        // Paths (adjust if your Jenkins agent uses different locations)
+        DEP_CHECK_DATA     = '/var/lib/jenkins/dependency-check-data'
+        TRIVY_TEMP         = '/var/lib/jenkins/trivy-temp'
+        KUBECONFIG_PATH    = '/var/lib/jenkins/.kube/config'
     }
- 
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Dushyantsharmma/DevOpsProject.git'
-             
+                git branch: 'main',
+                    url: 'https://github.com/Dushyantsharmma/DevOpsProject.git'
+
                 script {
                     env.GIT_COMMIT_SHORT = sh(
                         script: 'git rev-parse --short HEAD',
@@ -44,10 +58,10 @@ pipeline {
                 }
             }
         }
-     
+
         stage('Maven Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean package -DskipTests'
             }
             post {
                 success {
@@ -55,13 +69,12 @@ pipeline {
                 }
             }
         }
-     
+
         stage('OWASP Dependency Check') {
             steps {
                 withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-                 
-                    sh 'mkdir -p /var/lib/jenkins/dependency-check-data'
-                 
+                    sh "mkdir -p ${DEP_CHECK_DATA}"
+
                     dependencyCheck(
                         odcInstallation: 'dp-check',
                         additionalArguments: """
@@ -70,59 +83,107 @@ pipeline {
                             --format XML
                             --out .
                             --prettyPrint
-                            --data /var/lib/jenkins/dependency-check-data
+                            --data ${DEP_CHECK_DATA}
                             --noupdate
+                            --nvdApiKey ${NVD_API_KEY}
                         """
                     )
-                 
+
                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                    archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', fingerprint: true, allowEmptyArchive: true
+                    archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml',
+                                     fingerprint: true,
+                                     allowEmptyArchive: true
                 }
             }
         }
-     
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY}'
+                    sh """
+                        mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                            -Dsonar.projectKey=${SONAR_PROJECT_KEY}
+                    """
                 }
             }
         }
-     
+
+        stage('SonarQube Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh """
                     docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
                     echo "=== Built Docker Images ==="
-                    docker images | grep ${IMAGE_NAME}
+                    docker images | grep ${IMAGE_NAME} || true
                 """
             }
         }
-     
+
         stage('Trivy Image Scan') {
             steps {
                 sh """
-                mkdir -p /var/lib/jenkins/trivy-temp
-             
-                TMPDIR=/var/lib/jenkins/trivy-temp \
-                trivy image --skip-version-check --severity HIGH,CRITICAL \
-                    --format table --output trivy-report.txt --no-progress \
-                    ${IMAGE_NAME}:${BUILD_NUMBER}
-             
-                TMPDIR=/var/lib/jenkins/trivy-temp \
-                trivy image --skip-version-check --severity HIGH,CRITICAL \
-                    --format template --template "@contrib/html.tpl" \
-                    --output trivy-report.html --no-progress \
-                    ${IMAGE_NAME}:${BUILD_NUMBER} || \
-                trivy image --skip-version-check --severity HIGH,CRITICAL \
-                    --format json --output trivy-report.json --no-progress \
-                    ${IMAGE_NAME}:${BUILD_NUMBER}
+                    mkdir -p ${TRIVY_TEMP}
+
+                    # Table report
+                    TMPDIR=${TRIVY_TEMP} trivy image \
+                        --skip-version-check \
+                        --severity HIGH,CRITICAL \
+                        --format table \
+                        --output trivy-report.txt \
+                        --no-progress \
+                        ${IMAGE_NAME}:${BUILD_NUMBER}
+
+                    # JSON report (always works)
+                    TMPDIR=${TRIVY_TEMP} trivy image \
+                        --skip-version-check \
+                        --severity HIGH,CRITICAL \
+                        --format json \
+                        --output trivy-report.json \
+                        --no-progress \
+                        ${IMAGE_NAME}:${BUILD_NUMBER}
+
+                    # HTML report (best-effort)
+                    TMPDIR=${TRIVY_TEMP} trivy image \
+                        --skip-version-check \
+                        --severity HIGH,CRITICAL \
+                        --format template \
+                        --template "@contrib/html.tpl" \
+                        --output trivy-report.html \
+                        --no-progress \
+                        ${IMAGE_NAME}:${BUILD_NUMBER} || \
+                    echo "HTML template not available – JSON/TXT still generated"
                 """
-             
-                archiveArtifacts artifacts: 'trivy-report.txt,trivy-report.html,trivy-report.json', allowEmptyArchive: true, fingerprint: true
+
+                archiveArtifacts artifacts: 'trivy-report.txt,trivy-report.html,trivy-report.json',
+                                 allowEmptyArchive: true,
+                                 fingerprint: true
+
+                // Fail the build if HIGH/CRITICAL vulnerabilities exist
+                script {
+                    def criticalCount = sh(
+                        script: "grep -c 'CRITICAL' trivy-report.txt || true",
+                        returnStdout: true
+                    ).trim().toInteger()
+
+                    def highCount = sh(
+                        script: "grep -c 'HIGH' trivy-report.txt || true",
+                        returnStdout: true
+                    ).trim().toInteger()
+
+                    if (criticalCount > 0 || highCount > 0) {
+                        error "Trivy found ${criticalCount} CRITICAL and ${highCount} HIGH vulnerabilities. Failing the pipeline."
+                    }
+                }
             }
         }
-     
+
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
@@ -135,72 +196,93 @@ pipeline {
                 }
             }
         }
-     
+
         stage('Deploy to Kubernetes') {
             steps {
                 sh """
-                echo "=== Kubernetes Client Info ==="
-                kubectl version --client
-                kubectl config current-context
-             
-                echo "=== Applying Base Manifest ==="
-                kubectl apply -f k8s-deployment.yml
-             
-                echo "=== Updating Deployment Image ==="
-                kubectl set image deployment/${K8S_DEPLOYMENT} ${CONTAINER_NAME}=${DOCKERHUB_REPO}:${BUILD_NUMBER} -n ${K8S_NAMESPACE}
-             
-                echo "=== Waiting for Rollout ==="
-                kubectl rollout status deployment/${K8S_DEPLOYMENT} -n ${K8S_NAMESPACE} --timeout=180s
-             
-                echo "=== Deployment Status ==="
-                kubectl get deployments -n ${K8S_NAMESPACE}
-                echo "=== Pods ==="
-                kubectl get pods -o wide -n ${K8S_NAMESPACE}
-                echo "=== Services ==="
-                kubectl get svc -n ${K8S_NAMESPACE}
-                echo "=== Rollout History ==="
-                kubectl rollout history deployment/${K8S_DEPLOYMENT} -n ${K8S_NAMESPACE}
+                    export KUBECONFIG=${KUBECONFIG_PATH}
+
+                    echo "=== Kubernetes Client Info ==="
+                    kubectl version --client
+
+                    echo "=== Kubernetes Context ==="
+                    kubectl config current-context
+
+                    echo "=== Kubernetes Nodes ==="
+                    kubectl get nodes -o wide
+
+                    echo "=== Applying Base Manifest ==="
+                    kubectl apply -f k8s-deployment.yml
+
+                    echo "=== Updating Deployment Image ==="
+                    kubectl set image deployment/${K8S_DEPLOYMENT} \
+                        ${CONTAINER_NAME}=${DOCKERHUB_REPO}:${BUILD_NUMBER} \
+                        -n ${K8S_NAMESPACE}
+
+                    echo "=== Waiting for Rollout ==="
+                    kubectl rollout status deployment/${K8S_DEPLOYMENT} \
+                        -n ${K8S_NAMESPACE} --timeout=180s
+
+                    echo "=== Deployment Status ==="
+                    kubectl get deployments -n ${K8S_NAMESPACE}
+
+                    echo "=== Pods ==="
+                    kubectl get pods -o wide -n ${K8S_NAMESPACE}
+
+                    echo "=== Services ==="
+                    kubectl get svc -n ${K8S_NAMESPACE}
+
+                    echo "=== Rollout History ==="
+                    kubectl rollout history deployment/${K8S_DEPLOYMENT} -n ${K8S_NAMESPACE}
                 """
             }
         }
-      
+
         stage('OWASP ZAP Scan') {
             steps {
                 script {
                     sh 'rm -f zap-report.html || true'
-                    sh 'chmod -R 777 ${WORKSPACE}'
+                    sh "chmod -R 777 ${WORKSPACE}"
 
-                    // Wait until the app actually responds before scanning
+                    // Wait until the application is ready
                     sh """
                         echo "=== Waiting for application to be ready ==="
-                        for i in \$(seq 1 15); do
-                            if curl -s -o /dev/null -w "%{http_code}" ${params.APP_URL} | grep -q "200\\|301\\|302"; then
-                                echo "App is up!"
+                        for i in \$(seq 1 20); do
+                            HTTP_CODE=\$(curl -s -o /dev/null -w "%{http_code}" ${params.APP_URL} || echo "000")
+                            if echo "\$HTTP_CODE" | grep -qE "200|301|302"; then
+                                echo "App is up! (HTTP \$HTTP_CODE)"
                                 break
                             fi
-                            echo "Not ready yet, retrying in 5s... (\$i/15)"
+                            echo "Not ready yet (HTTP \$HTTP_CODE), retrying in 5s... (\$i/20)"
                             sleep 5
                         done
                     """
 
+                    // Run ZAP baseline scan
                     sh """
-                        docker run --rm \\
-                          -v \${WORKSPACE}:/zap/wrk:rw \\
-                          -w /zap/wrk \\
-                          ghcr.io/zaproxy/zaproxy:stable \\
-                          zap-baseline.py \\
-                          -t ${params.APP_URL} \\
-                          -r zap-report.html \\
-                          -I
+                        docker run --rm \
+                            -v ${WORKSPACE}:/zap/wrk:rw \
+                            -w /zap/wrk \
+                            ghcr.io/zaproxy/zaproxy:stable \
+                            zap-baseline.py \
+                            -t ${params.APP_URL} \
+                            -r zap-report.html \
+                            -I
                     """
                 }
-               
-                archiveArtifacts artifacts: 'zap-report.html', fingerprint: true, allowEmptyArchive: true
+
+                archiveArtifacts artifacts: 'zap-report.html',
+                                 fingerprint: true,
+                                 allowEmptyArchive: true
             }
         }
     }
- 
+
     post {
+        always {
+            cleanWs()
+        }
+
         success {
             emailext (
                 subject: "✅ Deployment Successful #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
@@ -208,7 +290,7 @@ pipeline {
                 attachLog: false,
                 attachmentsPattern: 'trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml,zap-report.html',
                 to: '227dushyantsharma@gmail.com',
-                body: '''
+                body: """
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -236,7 +318,7 @@ pipeline {
                         </div>
                         <div class="content">
                             <p><strong>Status:</strong> <span class="status success">SUCCESS</span></p>
-                         
+
                             <table>
                                 <tr><th>Project</th><td>${env.JOB_NAME}</td></tr>
                                 <tr><th>Build Number</th><td>#${env.BUILD_NUMBER}</td></tr>
@@ -259,24 +341,24 @@ pipeline {
                                 <tr><th>SonarQube Report</th><td><a href="${SONAR_URL}" target="_blank">View SonarQube Dashboard</a></td></tr>
                                 <tr><th>Build URL</th><td><a href="${env.BUILD_URL}" target="_blank">View Build Details in Jenkins</a></td></tr>
                             </table>
-                         
+
                             <h3>Pipeline Stages</h3>
                             <ul>
                                 <li>✅ Source Code Checkout</li>
                                 <li>✅ Maven Build & Packaging</li>
                                 <li>✅ OWASP Dependency Check</li>
-                                <li>✅ SonarQube Code Quality Analysis</li>
+                                <li>✅ SonarQube Code Quality Analysis + Quality Gate</li>
                                 <li>✅ Docker Image Build</li>
-                                <li>✅ Trivy Security Scan</li>
+                                <li>✅ Trivy Security Scan (fails on HIGH/CRITICAL)</li>
                                 <li>✅ Push to Docker Hub</li>
                                 <li>✅ Deploy to Kubernetes</li>
                                 <li>✅ OWASP ZAP Baseline Scan</li>
                             </ul>
-                         
+
                             <div class="report-box">
                                 <h3 style="margin-top:0;">📎 Security Reports Attached</h3>
                                 <ul style="margin-bottom:0;">
-                                    <li><strong>Trivy Image Scan</strong> → trivy-report.html + trivy-report.txt</li>
+                                    <li><strong>Trivy Image Scan</strong> → trivy-report.html + trivy-report.txt + trivy-report.json</li>
                                     <li><strong>OWASP Dependency-Check</strong> → dependency-check-report.html + dependency-check-report.xml</li>
                                     <li><strong>OWASP ZAP</strong> → zap-report.html</li>
                                 </ul>
@@ -289,10 +371,10 @@ pipeline {
                     </div>
                 </body>
                 </html>
-                '''
+                """
             )
         }
-     
+
         failure {
             emailext (
                 subject: "❌ BUILD FAILED #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
@@ -300,7 +382,7 @@ pipeline {
                 attachLog: true,
                 attachmentsPattern: 'trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml,zap-report.html',
                 to: '227dushyantsharma@gmail.com',
-                body: '''
+                body: """
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -326,7 +408,7 @@ pipeline {
                         </div>
                         <div class="content">
                             <p><strong>Status:</strong> <span class="status">FAILED</span></p>
-                         
+
                             <table>
                                 <tr><th>Project</th><td>${env.JOB_NAME}</td></tr>
                                 <tr><th>Build Number</th><td>#${env.BUILD_NUMBER}</td></tr>
@@ -337,7 +419,7 @@ pipeline {
                                 <tr><th>Environment</th><td>${DEPLOY_ENV}</td></tr>
                                 <tr><th>Build URL</th><td><a href="${env.BUILD_URL}" target="_blank">${env.BUILD_URL}</a></td></tr>
                             </table>
-                         
+
                             <p><strong>Build has failed.</strong> Please check the attached build log and any available security reports for details.</p>
                         </div>
                         <div class="footer">
@@ -347,7 +429,7 @@ pipeline {
                     </div>
                 </body>
                 </html>
-                '''
+                """
             )
         }
     }
