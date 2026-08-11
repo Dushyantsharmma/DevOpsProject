@@ -10,99 +10,173 @@ pipeline {
         timeout(time: 60, unit: 'MINUTES')
         timestamps()
         disableConcurrentBuilds()
+        skipDefaultCheckout(true)
     }
 
     parameters {
         string(
             name: 'APP_URL',
             defaultValue: 'http://13.233.121.103:30007',
-            description: 'Application URL (NodePort of the worker)'
+            description: 'Application URL / Kubernetes NodePort'
         )
     }
 
     environment {
-        // SonarQube
-        SONARQUBE_SERVER   = 'sonar'
-        SONAR_PROJECT_KEY  = 'DevOpsProject'
-        SONAR_URL          = 'http://65.0.81.202:9000/dashboard?id=DevOpsProject'
 
-        // Docker
-        IMAGE_NAME         = 'fistpipeline'
-        DOCKERHUB_REPO     = 'dushyantsharmma/fistpipeline'
+        // ============================================================
+        // SONARQUBE
+        // ============================================================
 
-        // Kubernetes
-        K8S_DEPLOYMENT     = 'simple-webapp-deployment'
-        K8S_NAMESPACE      = 'default'
-        CONTAINER_NAME     = 'simple-webapp'
+        SONARQUBE_SERVER  = 'sonar'
+        SONAR_PROJECT_KEY = 'DevOpsProject'
+        SONAR_URL         = 'http://65.0.81.202:9000/dashboard?id=DevOpsProject'
 
-        // Environment
-        DEPLOY_ENV         = 'Production'
+        // Jenkins → Credentials → Secret Text
+        SONAR_TOKEN_CREDENTIAL = 'sonarqube-token'
 
-        // Paths
-        DEP_CHECK_DATA     = '/var/lib/jenkins/dependency-check-data'
-        TRIVY_TEMP         = '/var/lib/jenkins/trivy-temp'
-        KUBECONFIG_PATH    = '/var/lib/jenkins/.kube/config'
+
+        // ============================================================
+        // DOCKER
+        // ============================================================
+
+        IMAGE_NAME     = 'fistpipeline'
+        DOCKERHUB_REPO = 'dushyantsharmma/fistpipeline'
+
+
+        // ============================================================
+        // KUBERNETES
+        // ============================================================
+
+        K8S_DEPLOYMENT = 'simple-webapp-deployment'
+        K8S_NAMESPACE  = 'default'
+        CONTAINER_NAME = 'simple-webapp'
+
+
+        // ============================================================
+        // ENVIRONMENT
+        // ============================================================
+
+        DEPLOY_ENV = 'Production'
+
+
+        // ============================================================
+        // PATHS
+        // ============================================================
+
+        DEP_CHECK_DATA  = '/var/lib/jenkins/dependency-check-data'
+        TRIVY_TEMP      = '/var/lib/jenkins/trivy-temp'
+        KUBECONFIG_PATH = '/var/lib/jenkins/.kube/config'
     }
+
 
     stages {
 
-        // ==========================================================
-        // CHECKOUT
-        // ==========================================================
+        // ============================================================
+        // 1. CHECKOUT
+        // ============================================================
+
         stage('Checkout') {
+
             steps {
+
                 script {
+
                     try {
-                        git branch: 'main',
+
+                        git(
+                            branch: 'main',
                             url: 'https://github.com/Dushyantsharmma/DevOpsProject.git'
+                        )
 
                         env.GIT_COMMIT_SHORT = sh(
                             script: 'git rev-parse --short HEAD',
                             returnStdout: true
                         ).trim()
+
+                        echo "Git Commit: ${env.GIT_COMMIT_SHORT}"
+
                     } catch (err) {
+
                         env.FAILED_STAGE = 'Checkout'
                         env.FAILED_ERROR = err.getMessage()
+
                         throw err
                     }
                 }
             }
         }
 
-        // ==========================================================
-        // MAVEN BUILD
-        // ==========================================================
+
+        // ============================================================
+        // 2. MAVEN BUILD
+        // ============================================================
+
         stage('Maven Build') {
+
             steps {
+
                 script {
+
                     try {
-                        sh 'mvn clean package -DskipTests'
+
+                        sh '''
+                            set -eux
+
+                            echo "======================================"
+                            echo " Maven Build"
+                            echo "======================================"
+
+                            mvn clean package -DskipTests
+                        '''
+
                     } catch (err) {
+
                         env.FAILED_STAGE = 'Maven Build'
                         env.FAILED_ERROR = err.getMessage()
+
                         throw err
                     }
                 }
             }
+
             post {
+
                 success {
-                    archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+
+                    archiveArtifacts(
+                        artifacts: 'target/*.war',
+                        fingerprint: true,
+                        allowEmptyArchive: false
+                    )
                 }
             }
         }
 
-        // ==========================================================
-        // OWASP DEPENDENCY CHECK
-        // ==========================================================
+
+        // ============================================================
+        // 3. OWASP DEPENDENCY CHECK
+        // ============================================================
+
         stage('OWASP Dependency Check') {
+
             steps {
+
                 script {
+
                     try {
-                        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
+
+                        withCredentials([
+                            string(
+                                credentialsId: 'nvd-api-key',
+                                variable: 'NVD_API_KEY'
+                            )
+                        ]) {
+
                             sh "mkdir -p ${DEP_CHECK_DATA}"
 
                             dependencyCheck(
                                 odcInstallation: 'dp-check',
+
                                 additionalArguments: """
                                     --scan .
                                     --format HTML
@@ -115,345 +189,866 @@ pipeline {
                                 """
                             )
 
-                            dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                            dependencyCheckPublisher(
+                                pattern: '**/dependency-check-report.xml'
+                            )
 
                             archiveArtifacts(
-                                artifacts: 'dependency-check-report.html,dependency-check-report.xml',
+                                artifacts:
+                                    'dependency-check-report.html,' +
+                                    'dependency-check-report.xml',
+
                                 fingerprint: true,
                                 allowEmptyArchive: true
                             )
                         }
+
                     } catch (err) {
+
                         env.FAILED_STAGE = 'OWASP Dependency Check'
                         env.FAILED_ERROR = err.getMessage()
+
                         throw err
                     }
                 }
             }
         }
 
-        // ==========================================================
-        // SONARQUBE ANALYSIS
-        // ==========================================================
+
+        // ============================================================
+        // 4. SONARQUBE ANALYSIS
+        // ============================================================
+
         stage('SonarQube Analysis') {
+
             steps {
+
                 script {
+
                     try {
+
                         withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                            sh """
-                                mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                    -Dsonar.projectKey=${SONAR_PROJECT_KEY}
-                            """
+
+                            withCredentials([
+                                string(
+                                    credentialsId: "${SONAR_TOKEN_CREDENTIAL}",
+                                    variable: 'SONAR_TOKEN'
+                                )
+                            ]) {
+
+                                sh '''
+                                    set -eux
+
+                                    echo "======================================"
+                                    echo " SonarQube Analysis"
+                                    echo "======================================"
+
+                                    mvn \
+                                      org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                                      -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+                                      -Dsonar.token="${SONAR_TOKEN}"
+
+                                    echo ""
+                                    echo "=== SonarQube Task Metadata ==="
+
+                                    test -f target/sonar/report-task.txt
+
+                                    cat target/sonar/report-task.txt
+                                '''
+                            }
                         }
+
                     } catch (err) {
+
                         env.FAILED_STAGE = 'SonarQube Analysis'
                         env.FAILED_ERROR = err.getMessage()
+
                         throw err
                     }
                 }
             }
         }
 
-        // ==========================================================
-        // SONAR QUALITY GATE
-        // ==========================================================
+
+        // ============================================================
+        // 5. SONARQUBE QUALITY GATE
+        //
+        // NO waitForQualityGate
+        //
+        // We directly poll SonarQube.
+        //
+        // Therefore Jenkins Stage View will NOT show:
+        //
+        // "(paused for 1s)"
+        //
+        // ============================================================
+
         stage('SonarQube Quality Gate') {
+
             steps {
+
                 script {
+
                     try {
-                        timeout(time: 5, unit: 'MINUTES') {
-                            waitForQualityGate abortPipeline: true
+
+                        withSonarQubeEnv("${SONARQUBE_SERVER}") {
+
+                            withCredentials([
+                                string(
+                                    credentialsId: "${SONAR_TOKEN_CREDENTIAL}",
+                                    variable: 'SONAR_TOKEN'
+                                )
+                            ]) {
+
+                                sh '''
+                                    set -eu
+
+                                    echo "======================================"
+                                    echo " SonarQube Quality Gate"
+                                    echo "======================================"
+
+                                    REPORT_FILE="target/sonar/report-task.txt"
+
+                                    if [ ! -f "$REPORT_FILE" ]; then
+
+                                        echo "ERROR: Sonar report-task.txt not found."
+
+                                        exit 1
+                                    fi
+
+
+                                    # ------------------------------------------------
+                                    # Get Compute Engine Task ID
+                                    # ------------------------------------------------
+
+                                    CE_TASK_ID=$(
+
+                                        awk -F= \
+                                        '$1=="ceTaskId"{print $2}' \
+                                        "$REPORT_FILE"
+
+                                    )
+
+
+                                    SONAR_SERVER=$(
+
+                                        awk -F= \
+                                        '$1=="serverUrl"{print $2}' \
+                                        "$REPORT_FILE"
+
+                                    )
+
+
+                                    if [ -z "$SONAR_SERVER" ]; then
+                                        SONAR_SERVER="${SONAR_HOST_URL}"
+                                    fi
+
+
+                                    echo "SonarQube Server: ${SONAR_SERVER}"
+                                    echo "CE Task ID: ${CE_TASK_ID}"
+
+
+                                    if [ -z "$CE_TASK_ID" ]; then
+
+                                        echo "ERROR: SonarQube CE task ID not found."
+
+                                        exit 1
+                                    fi
+
+
+                                    # ------------------------------------------------
+                                    # Poll SonarQube
+                                    # ------------------------------------------------
+
+                                    MAX_ATTEMPTS=60
+                                    ATTEMPT=1
+
+                                    while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]
+
+                                    do
+
+                                        echo ""
+                                        echo "SonarQube check ${ATTEMPT}/${MAX_ATTEMPTS}"
+
+
+                                        CE_RESPONSE=$(
+
+                                            curl -fsS \
+                                            -u "${SONAR_TOKEN}:" \
+                                            "${SONAR_SERVER}/api/ce/task?id=${CE_TASK_ID}"
+
+                                        )
+
+
+                                        CE_STATUS=$(
+
+                                            printf '%s' "$CE_RESPONSE" |
+
+                                            python3 -c '
+
+import json
+import sys
+
+data = json.load(sys.stdin)
+
+print(
+    data["task"]["status"]
+)
+
+'
+
+                                        )
+
+
+                                        echo "Compute Engine Status: ${CE_STATUS}"
+
+
+                                        case "$CE_STATUS" in
+
+                                            SUCCESS)
+
+                                                echo "SonarQube analysis completed."
+
+                                                break
+
+                                                ;;
+
+
+                                            FAILED)
+
+                                                echo "SonarQube analysis FAILED."
+
+                                                printf '%s\n' "$CE_RESPONSE"
+
+                                                exit 1
+
+                                                ;;
+
+
+                                            CANCELED)
+
+                                                echo "SonarQube analysis was CANCELED."
+
+                                                exit 1
+
+                                                ;;
+
+
+                                            PENDING|IN_PROGRESS)
+
+                                                echo "SonarQube is processing analysis..."
+
+                                                sleep 2
+
+                                                ;;
+
+
+                                            *)
+
+                                                echo "Unknown SonarQube status: ${CE_STATUS}"
+
+                                                exit 1
+
+                                                ;;
+
+                                        esac
+
+
+                                        ATTEMPT=$((ATTEMPT + 1))
+
+                                    done
+
+
+                                    if [ "$ATTEMPT" -gt "$MAX_ATTEMPTS" ]; then
+
+                                        echo "ERROR: SonarQube analysis timeout."
+
+                                        exit 1
+
+                                    fi
+
+
+                                    # ------------------------------------------------
+                                    # Get Analysis ID
+                                    # ------------------------------------------------
+
+                                    ANALYSIS_ID=$(
+
+                                        printf '%s' "$CE_RESPONSE" |
+
+                                        python3 -c '
+
+import json
+import sys
+
+data = json.load(sys.stdin)
+
+print(
+    data["task"].get("analysisId", "")
+)
+
+'
+
+                                    )
+
+
+                                    if [ -z "$ANALYSIS_ID" ]; then
+
+                                        echo "ERROR: analysisId not found."
+
+                                        exit 1
+
+                                    fi
+
+
+                                    echo "Analysis ID: ${ANALYSIS_ID}"
+
+
+                                    # ------------------------------------------------
+                                    # Get Quality Gate
+                                    # ------------------------------------------------
+
+                                    QG_RESPONSE=$(
+
+                                        curl -fsS \
+                                        -u "${SONAR_TOKEN}:" \
+                                        "${SONAR_SERVER}/api/qualitygates/project_status?analysisId=${ANALYSIS_ID}"
+
+                                    )
+
+
+                                    QG_STATUS=$(
+
+                                        printf '%s' "$QG_RESPONSE" |
+
+                                        python3 -c '
+
+import json
+import sys
+
+data = json.load(sys.stdin)
+
+print(
+    data["projectStatus"]["status"]
+)
+
+'
+
+                                    )
+
+
+                                    echo ""
+                                    echo "======================================"
+                                    echo " QUALITY GATE RESULT"
+                                    echo "======================================"
+
+                                    echo "Status: ${QG_STATUS}"
+
+
+                                    # Save complete result
+
+                                    printf '%s\n' "$QG_RESPONSE" \
+                                        > sonar-quality-gate.json
+
+
+                                    # ------------------------------------------------
+                                    # Quality Gate Decision
+                                    # ------------------------------------------------
+
+                                    if [ "$QG_STATUS" != "OK" ]; then
+
+                                        echo ""
+                                        echo "======================================"
+                                        echo " ❌ QUALITY GATE FAILED"
+                                        echo "======================================"
+
+                                        printf '%s\n' "$QG_RESPONSE"
+
+                                        exit 1
+                                    fi
+
+
+                                    echo ""
+                                    echo "======================================"
+                                    echo " ✅ QUALITY GATE PASSED"
+                                    echo "======================================"
+                                '''
+
+
+                                archiveArtifacts(
+
+                                    artifacts: 'sonar-quality-gate.json',
+
+                                    allowEmptyArchive: false,
+
+                                    fingerprint: true
+                                )
+                            }
                         }
+
                     } catch (err) {
+
                         env.FAILED_STAGE = 'SonarQube Quality Gate'
                         env.FAILED_ERROR = err.getMessage()
+
                         throw err
                     }
                 }
             }
         }
 
-        // ==========================================================
-        // DOCKER BUILD
-        // ==========================================================
+
+        // ============================================================
+        // 6. BUILD DOCKER IMAGE
+        // ============================================================
+
         stage('Build Docker Image') {
+
             steps {
+
                 script {
+
                     try {
+
                         sh """
-                            docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
-                            echo "=== Built Docker Image ==="
+                            set -eux
+
+                            echo "======================================"
+                            echo " Building Docker Image"
+                            echo "======================================"
+
+                            docker build \
+                                -t ${IMAGE_NAME}:${BUILD_NUMBER} \
+                                .
+
+                            echo ""
+                            echo "Docker Image:"
                             docker images | grep ${IMAGE_NAME} || true
                         """
+
                     } catch (err) {
+
                         env.FAILED_STAGE = 'Build Docker Image'
                         env.FAILED_ERROR = err.getMessage()
+
                         throw err
                     }
                 }
             }
         }
 
-        // ==========================================================
-        // TRIVY IMAGE SCAN
-        // ==========================================================
+
+        // ============================================================
+        // 7. TRIVY IMAGE SCAN
+        // ============================================================
+
         stage('Trivy Image Scan') {
+
             steps {
+
                 script {
+
                     try {
+
                         sh """
+
+                            set -eu
+
                             mkdir -p ${TRIVY_TEMP}
 
-                            echo "=== Trivy Table Report ==="
-                            TMPDIR=${TRIVY_TEMP} trivy image \
-                                --skip-version-check \
-                                --severity HIGH,CRITICAL \
-                                --format table \
-                                --output trivy-report.txt \
-                                --no-progress \
+
+                            echo "======================================"
+                            echo " Trivy Security Scan"
+                            echo "======================================"
+
+
+                            echo "=== TXT Report ==="
+
+                            TMPDIR=${TRIVY_TEMP} trivy image \\
+                                --skip-version-check \\
+                                --severity HIGH,CRITICAL \\
+                                --format table \\
+                                --output trivy-report.txt \\
+                                --no-progress \\
                                 ${IMAGE_NAME}:${BUILD_NUMBER}
 
-                            echo "=== Trivy JSON Report ==="
-                            TMPDIR=${TRIVY_TEMP} trivy image \
-                                --skip-version-check \
-                                --severity HIGH,CRITICAL \
-                                --format json \
-                                --output trivy-report.json \
-                                --no-progress \
+
+                            echo "=== JSON Report ==="
+
+                            TMPDIR=${TRIVY_TEMP} trivy image \\
+                                --skip-version-check \\
+                                --severity HIGH,CRITICAL \\
+                                --format json \\
+                                --output trivy-report.json \\
+                                --no-progress \\
                                 ${IMAGE_NAME}:${BUILD_NUMBER}
 
-                            echo "=== Trivy HTML Report (best effort) ==="
-                            TMPDIR=${TRIVY_TEMP} trivy image \
-                                --skip-version-check \
-                                --severity HIGH,CRITICAL \
-                                --format template \
-                                --template "@contrib/html.tpl" \
-                                --output trivy-report.html \
-                                --no-progress \
-                                ${IMAGE_NAME}:${BUILD_NUMBER} || \
-                            echo "HTML template not available. JSON + TXT reports are still generated."
+
+                            echo "=== HTML Report ==="
+
+                            TMPDIR=${TRIVY_TEMP} trivy image \\
+                                --skip-version-check \\
+                                --severity HIGH,CRITICAL \\
+                                --format template \\
+                                --template "@contrib/html.tpl" \\
+                                --output trivy-report.html \\
+                                --no-progress \\
+                                ${IMAGE_NAME}:${BUILD_NUMBER} || \\
+                                echo "HTML template unavailable."
                         """
 
+
                         archiveArtifacts(
-                            artifacts: 'trivy-report.txt,trivy-report.html,trivy-report.json',
+
+                            artifacts:
+                                'trivy-report.txt,' +
+                                'trivy-report.json,' +
+                                'trivy-report.html',
+
                             allowEmptyArchive: true,
+
                             fingerprint: true
                         )
 
+
                         def criticalCount = sh(
-                            script: "grep -c 'CRITICAL' trivy-report.txt || true",
+
+                            script:
+                                "grep -c 'CRITICAL' trivy-report.txt || true",
+
                             returnStdout: true
+
                         ).trim().toInteger()
 
+
                         def highCount = sh(
-                            script: "grep -c 'HIGH' trivy-report.txt || true",
+
+                            script:
+                                "grep -c 'HIGH' trivy-report.txt || true",
+
                             returnStdout: true
+
                         ).trim().toInteger()
+
 
                         env.TRIVY_CRITICAL = "${criticalCount}"
                         env.TRIVY_HIGH     = "${highCount}"
 
-                        if (criticalCount > 0 || highCount > 0) {
-                            error "Trivy Security Gate Failed → CRITICAL: ${criticalCount}, HIGH: ${highCount}. Check trivy-report.txt / .json / .html"
+
+                        echo "HIGH vulnerabilities: ${highCount}"
+                        echo "CRITICAL vulnerabilities: ${criticalCount}"
+
+
+                        if (
+                            criticalCount > 0 ||
+                            highCount > 0
+                        ) {
+
+                            error(
+                                "Trivy Security Gate Failed -> " +
+                                "CRITICAL: ${criticalCount}, " +
+                                "HIGH: ${highCount}. " +
+                                "Check Trivy reports."
+                            )
                         }
 
+
                     } catch (err) {
+
                         env.FAILED_STAGE = 'Trivy Image Scan'
                         env.FAILED_ERROR = err.getMessage()
+
                         throw err
                     }
                 }
             }
         }
 
-        // ==========================================================
-        // PUSH TO DOCKER HUB
-        // ==========================================================
+
+        // ============================================================
+        // 8. PUSH DOCKER IMAGE
+        // ============================================================
+
         stage('Push Docker Image to Docker Hub') {
+
             steps {
+
                 script {
+
                     try {
-                        withDockerRegistry(credentialsId: 'dockerpassword', url: 'https://index.docker.io/v1/') {
+
+                        withDockerRegistry(
+
+                            credentialsId: 'dockerpassword',
+
+                            url: 'https://index.docker.io/v1/'
+
+                        ) {
+
                             sh """
-                                docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${DOCKERHUB_REPO}:${BUILD_NUMBER}
-                                docker push ${DOCKERHUB_REPO}:${BUILD_NUMBER}
+
+                                set -eux
+
+                                docker tag \
+                                    ${IMAGE_NAME}:${BUILD_NUMBER} \
+                                    ${DOCKERHUB_REPO}:${BUILD_NUMBER}
+
+
+                                docker push \
+                                    ${DOCKERHUB_REPO}:${BUILD_NUMBER}
+
                             """
                         }
+
                     } catch (err) {
-                        env.FAILED_STAGE = 'Push Docker Image to Docker Hub'
-                        env.FAILED_ERROR = err.getMessage()
+
+                        env.FAILED_STAGE =
+                            'Push Docker Image to Docker Hub'
+
+                        env.FAILED_ERROR =
+                            err.getMessage()
+
                         throw err
                     }
                 }
             }
         }
 
-        // ==========================================================
-        // KUBERNETES DEPLOYMENT
-        // ==========================================================
+
+        // ============================================================
+        // 9. DEPLOY TO KUBERNETES
+        // ============================================================
+
         stage('Deploy to Kubernetes') {
+
             steps {
+
                 script {
+
                     try {
+
                         sh """
+
+                            set -eu
+
                             export KUBECONFIG=${KUBECONFIG_PATH}
 
-                            echo "======================================"
-                            echo " Kubernetes Client"
-                            echo "======================================"
-                            kubectl version --client
 
                             echo "======================================"
-                            echo " Kubernetes Context"
+                            echo " Kubernetes Connection"
                             echo "======================================"
+
                             kubectl config current-context
 
+
+                            echo ""
                             echo "======================================"
                             echo " Kubernetes Nodes"
                             echo "======================================"
+
                             kubectl get nodes -o wide
 
+
+                            echo ""
                             echo "======================================"
-                            echo " Applying Kubernetes Manifest"
+                            echo " Applying Manifest"
                             echo "======================================"
+
                             kubectl apply -f k8s-deployment.yml
 
+
+                            echo ""
                             echo "======================================"
-                            echo " Updating Deployment Image"
+                            echo " Updating Image"
                             echo "======================================"
-                            kubectl set image deployment/${K8S_DEPLOYMENT} \
-                                ${CONTAINER_NAME}=${DOCKERHUB_REPO}:${BUILD_NUMBER} \
+
+                            kubectl set image \\
+                                deployment/${K8S_DEPLOYMENT} \\
+                                ${CONTAINER_NAME}=${DOCKERHUB_REPO}:${BUILD_NUMBER} \\
                                 -n ${K8S_NAMESPACE}
 
+
+                            echo ""
                             echo "======================================"
                             echo " Waiting For Rollout"
                             echo "======================================"
-                            kubectl rollout status deployment/${K8S_DEPLOYMENT} \
-                                -n ${K8S_NAMESPACE} --timeout=180s
 
-                            echo "======================================"
-                            echo " Deployment Status"
-                            echo "======================================"
-                            kubectl get deployments -n ${K8S_NAMESPACE}
+                            kubectl rollout status \\
+                                deployment/${K8S_DEPLOYMENT} \\
+                                -n ${K8S_NAMESPACE} \\
+                                --timeout=180s
 
+
+                            echo ""
+                            echo "======================================"
+                            echo " Deployment"
+                            echo "======================================"
+
+                            kubectl get deployment \\
+                                ${K8S_DEPLOYMENT} \\
+                                -n ${K8S_NAMESPACE}
+
+
+                            echo ""
                             echo "======================================"
                             echo " Pods"
                             echo "======================================"
-                            kubectl get pods -o wide -n ${K8S_NAMESPACE}
 
+                            kubectl get pods \\
+                                -n ${K8S_NAMESPACE} \\
+                                -o wide
+
+
+                            echo ""
                             echo "======================================"
                             echo " Services"
                             echo "======================================"
-                            kubectl get svc -n ${K8S_NAMESPACE}
 
+                            kubectl get svc \\
+                                -n ${K8S_NAMESPACE}
+
+
+                            echo ""
                             echo "======================================"
                             echo " Rollout History"
                             echo "======================================"
-                            kubectl rollout history deployment/${K8S_DEPLOYMENT} -n ${K8S_NAMESPACE}
-                        """
-                    } catch (err) {
-                        env.FAILED_STAGE = 'Deploy to Kubernetes'
-                        env.FAILED_ERROR = err.getMessage()
 
-                        // Collect diagnostics
+                            kubectl rollout history \\
+                                deployment/${K8S_DEPLOYMENT} \\
+                                -n ${K8S_NAMESPACE}
+
+                        """
+
+                    } catch (err) {
+
+                        env.FAILED_STAGE =
+                            'Deploy to Kubernetes'
+
+                        env.FAILED_ERROR =
+                            err.getMessage()
+
+
+                        // ====================================================
+                        // Kubernetes Failure Diagnostics
+                        // ====================================================
+
                         sh """
+
                             export KUBECONFIG=${KUBECONFIG_PATH}
+
+
                             {
+
                                 echo "================================================"
-                                echo "KUBERNETES FAILURE DIAGNOSTICS"
+                                echo " KUBERNETES FAILURE DIAGNOSTICS"
                                 echo "================================================"
+
+
                                 echo ""
                                 echo "=== Nodes ==="
+
                                 kubectl get nodes -o wide || true
+
+
                                 echo ""
                                 echo "=== All Pods ==="
+
                                 kubectl get pods -A -o wide || true
+
+
                                 echo ""
                                 echo "=== Deployment ==="
-                                kubectl get deployment ${K8S_DEPLOYMENT} -n ${K8S_NAMESPACE} -o wide || true
+
+                                kubectl get deployment \\
+                                    ${K8S_DEPLOYMENT} \\
+                                    -n ${K8S_NAMESPACE} \\
+                                    -o wide || true
+
+
                                 echo ""
                                 echo "=== ReplicaSets ==="
-                                kubectl get rs -n ${K8S_NAMESPACE} || true
+
+                                kubectl get rs \\
+                                    -n ${K8S_NAMESPACE} || true
+
+
                                 echo ""
-                                echo "=== Pods (by label app=simple-webapp) ==="
-                                kubectl get pods -n ${K8S_NAMESPACE} -l app=simple-webapp -o wide || true
+                                echo "=== Application Pods ==="
+
+                                kubectl get pods \\
+                                    -n ${K8S_NAMESPACE} \\
+                                    -l app=simple-webapp \\
+                                    -o wide || true
+
+
                                 echo ""
                                 echo "=== Deployment Description ==="
-                                kubectl describe deployment ${K8S_DEPLOYMENT} -n ${K8S_NAMESPACE} || true
+
+                                kubectl describe deployment \\
+                                    ${K8S_DEPLOYMENT} \\
+                                    -n ${K8S_NAMESPACE} || true
+
+
                                 echo ""
                                 echo "=== Recent Events ==="
-                                kubectl get events -n ${K8S_NAMESPACE} --sort-by='.lastTimestamp' || true
+
+                                kubectl get events \\
+                                    -n ${K8S_NAMESPACE} \\
+                                    --sort-by='.lastTimestamp' || true
+
+
                                 echo ""
-                                echo "=== Pod Descriptions & Logs ==="
-                                for POD in \$(kubectl get pods -n ${K8S_NAMESPACE} -l app=simple-webapp -o name 2>/dev/null); do
+                                echo "=== Pod Logs ==="
+
+
+                                for POD in \\$(
+
+                                    kubectl get pods \\
+                                        -n ${K8S_NAMESPACE} \\
+                                        -l app=simple-webapp \\
+                                        -o name 2>/dev/null
+
+                                ); do
+
+
                                     echo "----------------------------------------"
-                                    echo "POD: \$POD"
+
+                                    echo "POD: \\$POD"
+
                                     echo "----------------------------------------"
-                                    kubectl describe \$POD -n ${K8S_NAMESPACE} || true
+
+
+                                    kubectl describe \\
+                                        \\$POD \\
+                                        -n ${K8S_NAMESPACE} || true
+
+
                                     echo ""
-                                    echo "=== Logs ==="
-                                    kubectl logs \$POD -n ${K8S_NAMESPACE} --all-containers=true --tail=150 || true
-                                    echo ""
+
+                                    kubectl logs \\
+                                        \\$POD \\
+                                        -n ${K8S_NAMESPACE} \\
+                                        --all-containers=true \\
+                                        --tail=200 || true
+
                                 done
+
                             } > kubernetes-failure-diagnostics.txt 2>&1 || true
+
                         """
 
+
                         archiveArtifacts(
-                            artifacts: 'kubernetes-failure-diagnostics.txt',
+
+                            artifacts:
+                                'kubernetes-failure-diagnostics.txt',
+
                             allowEmptyArchive: true,
+
                             fingerprint: true
                         )
 
-                        throw err
-                    }
-                }
-            }
-        }
 
-        // ==========================================================
-        // OWASP ZAP SCAN
-        // ==========================================================
-        stage('OWASP ZAP Scan') {
-            steps {
-                script {
-                    try {
-                        sh 'rm -f zap-report.html || true'
-                        sh "chmod -R 777 ${WORKSPACE}"
-
-                        // Wait for application
-                        sh """
-                            echo "=== Waiting For Application ==="
-                            for i in \$(seq 1 20); do
-                                HTTP_CODE=\$(curl -s -o /dev/null -w "%{http_code}" ${params.APP_URL} || echo "000")
-                                if echo "\$HTTP_CODE" | grep -qE "200|301|302"; then
-                                    echo "Application is UP! HTTP Status: \$HTTP_CODE"
-                                    break
-                                fi
-                                echo "Not ready yet (HTTP \$HTTP_CODE). Retry \$i/20"
-                                sleep 5
-                            done
-                        """
-
-                        // Run ZAP
-                        sh """
-                            docker run --rm \
-                                -v ${WORKSPACE}:/zap/wrk:rw \
-                                -w /zap/wrk \
-                                ghcr.io/zaproxy/zaproxy:stable \
-                                zap-baseline.py \
-                                -t ${params.APP_URL} \
-                                -r zap-report.html \
-                                -I
-                        """
-
-                        archiveArtifacts(
-                            artifacts: 'zap-report.html',
-                            fingerprint: true,
-                            allowEmptyArchive: true
-                        )
-                    } catch (err) {
-                        env.FAILED_STAGE = 'OWASP ZAP Scan'
-                        env.FAILED_ERROR = err.getMessage()
                         throw err
                     }
                 }
@@ -461,287 +1056,521 @@ pipeline {
         }
     }
 
-    // ==============================================================
-    // POST ACTIONS
-    // ==============================================================
-    post {
-        success {
-            emailext(
-                subject: "✅ PIPELINE SUCCESS #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
-                mimeType: 'text/html',
-                attachLog: false,
-                attachmentsPattern: 'trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml,zap-report.html',
-                to: '227dushyantsharma@gmail.com',
-                body: """
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<style>
-body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; }
-.container { max-width: 850px; margin: auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-.header { background: linear-gradient(135deg,#198754,#20c997); color: white; padding: 30px; text-align: center; }
-.content { padding: 30px; }
-.status { color: white; background: #198754; padding: 8px 18px; border-radius: 20px; font-weight: bold; }
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-th { width: 35%; background: #f8f9fa; }
-.success-box { background: #e9f7ef; border-left: 5px solid #198754; padding: 15px; margin-top: 20px; border-radius: 0 6px 6px 0; }
-.footer { padding: 20px; text-align: center; color: #777; font-size: 13px; }
-a { color: #0d6efd; text-decoration: none; }
-</style>
-</head>
-<body>
-<div class="container">
-<div class="header">
-<h1>✅ PIPELINE SUCCESSFUL</h1>
-<h2>${env.JOB_NAME} #${env.BUILD_NUMBER}</h2>
-</div>
-<div class="content">
-<p><strong>Status:</strong> <span class="status">SUCCESS</span></p>
 
-<table>
-<tr><th>Project</th><td>${env.JOB_NAME}</td></tr>
-<tr><th>Build</th><td>#${env.BUILD_NUMBER}</td></tr>
-<tr><th>Build Date</th><td>${new Date()}</td></tr>
-<tr><th>Duration</th><td>${currentBuild.durationString}</td></tr>
-<tr><th>Git Commit</th><td>${env.GIT_COMMIT_SHORT ?: 'N/A'}</td></tr>
-<tr><th>Environment</th><td>${DEPLOY_ENV}</td></tr>
-<tr><th>Docker Image</th><td>${DOCKERHUB_REPO}:${BUILD_NUMBER}</td></tr>
-<tr><th>Kubernetes Deployment</th><td>${K8S_DEPLOYMENT}</td></tr>
-<tr><th>Namespace</th><td>${K8S_NAMESPACE}</td></tr>
-<tr><th>Application</th><td><a href="${params.APP_URL}">${params.APP_URL}</a></td></tr>
-<tr><th>SonarQube</th><td><a href="${SONAR_URL}">View Dashboard</a></td></tr>
-<tr><th>Jenkins Build</th><td><a href="${env.BUILD_URL}">Open Build</a></td></tr>
+    // ================================================================
+    // POST ACTIONS
+    // ================================================================
+
+    post {
+
+
+        // ============================================================
+        // SUCCESS
+        // ============================================================
+
+        success {
+
+            emailext(
+
+                subject:
+                    "✅ PIPELINE SUCCESS #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
+
+                mimeType: 'text/html',
+
+                attachLog: false,
+
+                attachmentsPattern:
+                    'target/*.war,' +
+                    'sonar-quality-gate.json,' +
+                    'trivy-report.txt,' +
+                    'trivy-report.html,' +
+                    'trivy-report.json,' +
+                    'dependency-check-report.html,' +
+                    'dependency-check-report.xml',
+
+                to:
+                    '227dushyantsharma@gmail.com',
+
+                body:
+"""
+<!DOCTYPE html>
+
+<html>
+
+<body>
+
+<h1>🟢 PIPELINE SUCCESSFUL</h1>
+
+<h2>${env.JOB_NAME} #${env.BUILD_NUMBER}</h2>
+
+
+<hr>
+
+
+<h3>Deployment Summary</h3>
+
+<table border="1" cellpadding="8">
+
+<tr>
+<td><b>Status</b></td>
+<td>SUCCESS</td>
+</tr>
+
+<tr>
+<td><b>Git Commit</b></td>
+<td>${env.GIT_COMMIT_SHORT ?: 'N/A'}</td>
+</tr>
+
+<tr>
+<td><b>Environment</b></td>
+<td>${DEPLOY_ENV}</td>
+</tr>
+
+<tr>
+<td><b>Docker Image</b></td>
+<td>${DOCKERHUB_REPO}:${BUILD_NUMBER}</td>
+</tr>
+
+<tr>
+<td><b>Kubernetes Deployment</b></td>
+<td>${K8S_DEPLOYMENT}</td>
+</tr>
+
+<tr>
+<td><b>Namespace</b></td>
+<td>${K8S_NAMESPACE}</td>
+</tr>
+
+<tr>
+<td><b>Application</b></td>
+<td>
+<a href="${params.APP_URL}">
+${params.APP_URL}
+</a>
+</td>
+</tr>
+
+<tr>
+<td><b>SonarQube</b></td>
+<td>
+<a href="${SONAR_URL}">
+Open SonarQube
+</a>
+</td>
+</tr>
+
+<tr>
+<td><b>Jenkins Build</b></td>
+<td>
+<a href="${env.BUILD_URL}">
+Open Jenkins Build
+</a>
+</td>
+</tr>
+
 </table>
 
-<div class="success-box">
-<h3>🎯 Pipeline Stages Passed</h3>
-<ul>
-<li>✅ Source Checkout</li>
-<li>✅ Maven Build</li>
-<li>✅ OWASP Dependency Check</li>
-<li>✅ SonarQube Analysis + Quality Gate</li>
-<li>✅ Docker Image Build</li>
-<li>✅ Trivy Security Scan (no HIGH/CRITICAL)</li>
-<li>✅ Docker Hub Push</li>
-<li>✅ Kubernetes Deployment + Rollout</li>
-<li>✅ OWASP ZAP Baseline Scan</li>
-</ul>
-</div>
 
-<h3>📎 Security Reports Attached</h3>
+<h3>🎯 Pipeline Stages Passed</h3>
+
 <ul>
-<li>Trivy (txt / html / json)</li>
-<li>OWASP Dependency-Check (html / xml)</li>
-<li>OWASP ZAP (html)</li>
+
+<li>✅ Checkout</li>
+
+<li>✅ Maven Build</li>
+
+<li>✅ OWASP Dependency Check</li>
+
+<li>✅ SonarQube Analysis</li>
+
+<li>✅ SonarQube Quality Gate</li>
+
+<li>✅ Docker Image Build</li>
+
+<li>✅ Trivy Security Scan</li>
+
+<li>✅ Docker Hub Push</li>
+
+<li>✅ Kubernetes Deployment</li>
+
 </ul>
-</div>
-<div class="footer">
-<p><strong>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP ZAP</strong></p>
-<p>DevSecOps CI/CD Pipeline</p>
-</div>
-</div>
+
+
+<h3>📎 Reports Attached</h3>
+
+<ul>
+
+<li>📦 WAR Artifact</li>
+
+<li>📊 SonarQube Quality Gate JSON</li>
+
+<li>🛡️ Trivy TXT</li>
+
+<li>🛡️ Trivy JSON</li>
+
+<li>🛡️ Trivy HTML</li>
+
+<li>🔍 OWASP Dependency Check HTML</li>
+
+<li>🔍 OWASP Dependency Check XML</li>
+
+</ul>
+
+
+<h3>🚀 Deployment Status</h3>
+
+<p>
+
+Application successfully built, scanned,
+pushed to Docker Hub and deployed to Kubernetes.
+
+</p>
+
+
 </body>
+
 </html>
 """
             )
         }
 
+
+        // ============================================================
+        // FAILURE
+        // ============================================================
+
         failure {
+
             script {
-                def cause = "Unknown failure"
-                def fix   = "Check the Jenkins Console Output and any attached diagnostics."
+
+                def cause =
+                    "Unknown failure."
+
+                def fix =
+                    "Open Jenkins Console Output and inspect the failed stage."
+
 
                 switch (env.FAILED_STAGE) {
+
+
                     case 'Checkout':
-                        cause = "Git repository checkout failed."
-                        fix = """Check:
-1. Repository URL
-2. Branch name (main)
-3. GitHub credentials / access
-4. Network connectivity from Jenkins agent"""
+
+                        cause =
+                            "Git repository checkout failed."
+
+                        fix =
+"""
+1. Check GitHub repository URL.
+2. Check branch.
+3. Check GitHub credentials.
+4. Check network connectivity.
+"""
+
                         break
+
+
                     case 'Maven Build':
-                        cause = "Maven could not compile/package the application."
-                        fix = """Check:
-1. Java version compatibility
-2. pom.xml
-3. Maven dependencies
-4. Compilation errors in console"""
+
+                        cause =
+                            "Maven could not compile/package the application."
+
+                        fix =
+"""
+1. Check Java version.
+2. Check pom.xml.
+3. Check Maven dependencies.
+4. Read the compilation error.
+"""
+
                         break
+
+
                     case 'OWASP Dependency Check':
-                        cause = "OWASP Dependency-Check failed."
-                        fix = """Check:
-1. NVD API key validity
-2. Dependency-Check database path
-3. Network access to NVD
-4. dependency-check-report.xml"""
+
+                        cause =
+                            "OWASP Dependency-Check failed."
+
+                        fix =
+"""
+1. Check NVD API key.
+2. Check Dependency-Check database.
+3. Check network connectivity.
+4. Open dependency-check-report.xml.
+"""
+
                         break
+
+
                     case 'SonarQube Analysis':
-                        cause = "SonarQube analysis could not complete."
-                        fix = """Check:
-1. SonarQube server is up
-2. Jenkins SonarQube configuration (server name = 'sonar')
-3. Token / credentials
-4. Network connectivity"""
+
+                        cause =
+                            "SonarQube analysis could not complete."
+
+                        fix =
+"""
+1. Check SonarQube is running.
+2. Check Jenkins SonarQube server configuration.
+3. Check SonarQube token.
+4. Check network connectivity.
+"""
+
                         break
+
+
                     case 'SonarQube Quality Gate':
-                        cause = "SonarQube Quality Gate rejected the build."
-                        fix = """Open SonarQube dashboard and inspect:
-- Bugs, Vulnerabilities, Code Smells
-- Coverage, Duplications
-- Quality Gate conditions"""
+
+                        cause =
+                            "SonarQube Quality Gate rejected the build."
+
+                        fix =
+"""
+1. Open SonarQube dashboard.
+2. Check Bugs.
+3. Check Vulnerabilities.
+4. Check Code Smells.
+5. Check Coverage.
+6. Check Duplications.
+7. Identify the failed Quality Gate condition.
+8. Fix the issue.
+9. Commit changes.
+10. Run pipeline again.
+"""
+
                         break
+
+
                     case 'Build Docker Image':
-                        cause = "Docker image build failed."
-                        fix = """Check:
-1. Dockerfile syntax
-2. Base image availability
-3. Docker daemon status
-4. Disk space on agent"""
+
+                        cause =
+                            "Docker image build failed."
+
+                        fix =
+"""
+1. Check Dockerfile.
+2. Check base image.
+3. Check Docker daemon.
+4. Check disk space.
+5. Read Docker build error.
+"""
+
                         break
+
+
                     case 'Trivy Image Scan':
-                        cause = "Trivy found HIGH or CRITICAL vulnerabilities."
-                        fix = """Review attached reports:
-trivy-report.txt / .json / .html
 
-Recommended actions:
-1. Update vulnerable packages / base image
-2. Rebuild image
-3. Re-run pipeline"""
+                        cause =
+                            "Trivy detected HIGH or CRITICAL vulnerabilities."
+
+                        fix =
+"""
+1. Open trivy-report.txt.
+2. Open trivy-report.json.
+3. Identify vulnerable package.
+4. Update package/base image.
+5. Rebuild Docker image.
+6. Run pipeline again.
+"""
+
                         break
+
+
                     case 'Push Docker Image to Docker Hub':
-                        cause = "Failed to push image to Docker Hub."
-                        fix = """Check:
-1. Docker Hub credentials (credentialsId: dockerpassword)
-2. Repository name & permissions
-3. Network connectivity"""
-                        break
-                    case 'Deploy to Kubernetes':
-                        cause = "Kubernetes deployment or rollout failed."
-                        fix = """Check the attached file: kubernetes-failure-diagnostics.txt
 
-Common causes:
-- ImagePullBackOff / ErrImagePull
-- CrashLoopBackOff
-- Insufficient resources
-- Wrong image tag
-- Readiness/Liveness probe failure
-- Incorrect labels or selectors"""
+                        cause =
+                            "Docker image push failed."
+
+                        fix =
+"""
+1. Check Docker Hub credentials.
+2. Check repository name.
+3. Check repository permissions.
+4. Check Docker Hub connectivity.
+"""
+
                         break
-                    case 'OWASP ZAP Scan':
-                        cause = "OWASP ZAP scan failed."
-                        fix = """Check:
-1. Application URL is reachable
-2. Kubernetes Service / NodePort
-3. Application is fully up
-4. ZAP container can reach the app"""
+
+
+                    case 'Deploy to Kubernetes':
+
+                        cause =
+                            "Kubernetes deployment or rollout failed."
+
+                        fix =
+"""
+1. Open kubernetes-failure-diagnostics.txt.
+2. Check Pod status.
+3. Check Kubernetes Events.
+4. Check Pod logs.
+5. Check ImagePullBackOff.
+6. Check CrashLoopBackOff.
+7. Check image tag.
+8. Check readiness/liveness probes.
+9. Check resources.
+"""
+
                         break
-                    default:
-                        cause = "An unexpected error occurred."
-                        fix = "Open the Jenkins console log for the full stack trace."
                 }
 
+
                 emailext(
-                    subject: "❌ PIPELINE FAILED #${env.BUILD_NUMBER} - ${env.JOB_NAME} [${env.FAILED_STAGE ?: 'Unknown'}]",
+
+                    subject:
+                        "❌ PIPELINE FAILED #${env.BUILD_NUMBER} - " +
+                        "${env.JOB_NAME} [${env.FAILED_STAGE ?: 'Unknown'}]",
+
                     mimeType: 'text/html',
+
                     attachLog: true,
-                    attachmentsPattern: 'kubernetes-failure-diagnostics.txt,trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml,zap-report.html',
-                    to: '227dushyantsharma@gmail.com',
-                    body: """
+
+                    attachmentsPattern:
+                        'target/*.war,' +
+                        'sonar-quality-gate.json,' +
+                        'kubernetes-failure-diagnostics.txt,' +
+                        'trivy-report.txt,' +
+                        'trivy-report.html,' +
+                        'trivy-report.json,' +
+                        'dependency-check-report.html,' +
+                        'dependency-check-report.xml',
+
+                    to:
+                        '227dushyantsharma@gmail.com',
+
+                    body:
+"""
 <!DOCTYPE html>
+
 <html>
-<head>
-<meta charset="UTF-8">
-<style>
-body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; }
-.container { max-width: 850px; margin: auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-.header { background: linear-gradient(135deg,#dc3545,#e4606e); color: white; padding: 30px; text-align: center; }
-.content { padding: 30px; }
-.failed { color: white; background: #dc3545; padding: 8px 18px; border-radius: 20px; font-weight: bold; }
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; vertical-align: top; }
-th { width: 30%; background: #f8f9fa; }
-.error-box { background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin-top: 20px; border-radius: 0 6px 6px 0; }
-.fix-box { background: #e9f7ef; border-left: 5px solid #198754; padding: 15px; margin-top: 20px; border-radius: 0 6px 6px 0; }
-.debug-box { background: #f1f3f5; border-left: 5px solid #6c757d; padding: 15px; margin-top: 20px; border-radius: 0 6px 6px 0; }
-pre { background: #212529; color: #f8f9fa; padding: 12px; border-radius: 6px; overflow-x: auto; white-space: pre-wrap; }
-.footer { padding: 20px; text-align: center; color: #777; font-size: 13px; }
-a { color: #0d6efd; }
-</style>
-</head>
+
 <body>
-<div class="container">
-<div class="header">
-<h1>❌ PIPELINE FAILED</h1>
+
+<h1>🔴 PIPELINE FAILED</h1>
+
 <h2>${env.JOB_NAME} #${env.BUILD_NUMBER}</h2>
-</div>
-<div class="content">
-<p><strong>Status:</strong> <span class="failed">FAILED</span></p>
 
-<table>
-<tr><th>Project</th><td>${env.JOB_NAME}</td></tr>
-<tr><th>Build Number</th><td>#${env.BUILD_NUMBER}</td></tr>
-<tr><th>Failed Stage</th><td><strong>${env.FAILED_STAGE ?: 'Unknown'}</strong></td></tr>
-<tr><th>Git Commit</th><td>${env.GIT_COMMIT_SHORT ?: 'N/A'}</td></tr>
-<tr><th>Environment</th><td>${DEPLOY_ENV}</td></tr>
-<tr><th>Duration</th><td>${currentBuild.durationString}</td></tr>
-<tr><th>Jenkins Build</th><td><a href="${env.BUILD_URL}">Open Build</a></td></tr>
-</table>
 
-<div class="error-box">
-<h3>🔴 What Failed?</h3>
-<p><strong>Stage:</strong> ${env.FAILED_STAGE ?: 'Unknown'}</p>
-<p><strong>Exact Error:</strong></p>
-<pre>${env.FAILED_ERROR ?: 'No detailed error message captured'}</pre>
-</div>
+<hr>
 
-<div class="error-box">
+
+<h2>❌ What Failed?</h2>
+
+<p>
+
+<b>Failed Stage:</b>
+
+${env.FAILED_STAGE ?: 'Unknown'}
+
+</p>
+
+
+<h3>🔴 Exact Error</h3>
+
+<pre>
+
+${env.FAILED_ERROR ?: 'No exception message captured. Check Console Output.'}
+
+</pre>
+
+
 <h3>🧠 Probable Root Cause</h3>
-<p>${cause}</p>
-</div>
 
-<div class="fix-box">
-<h3>🛠️ How To Fix It</h3>
-<pre>${fix}</pre>
-</div>
+<p>
 
-<div class="debug-box">
-<h3>🔍 Debugging Information</h3>
+${cause}
+
+</p>
+
+
+<h3>🛠️ How To Fix</h3>
+
+<pre>
+
+${fix}
+
+</pre>
+
+
+<h3>🔍 Debug Information</h3>
+
 <ul>
-<li>Full Jenkins Console Log is attached</li>
-<li>Kubernetes diagnostics attached (if deployment failed)</li>
-<li>Trivy / Dependency-Check / ZAP reports attached (when available)</li>
-</ul>
-<p><a href="${env.BUILD_URL}console">Open Full Console Output</a></p>
-</div>
 
-<h3>🚨 Recommended Next Steps</h3>
+<li>📋 Full Jenkins Console Log attached</li>
+
+<li>☸️ Kubernetes diagnostics attached if deployment failed</li>
+
+<li>🛡️ Trivy reports attached when available</li>
+
+<li>🔍 Dependency-Check reports attached when available</li>
+
+<li>📊 SonarQube Quality Gate JSON attached when available</li>
+
+</ul>
+
+
+<h3>🔗 Quick Links</h3>
+
+<ul>
+
+<li>
+<a href="${env.BUILD_URL}">
+Open Jenkins Build
+</a>
+</li>
+
+<li>
+<a href="${env.BUILD_URL}console">
+Open Console Output
+</a>
+</li>
+
+<li>
+<a href="${SONAR_URL}">
+Open SonarQube
+</a>
+</li>
+
+</ul>
+
+
+<h3>🚨 Next Steps</h3>
+
 <ol>
-<li>Open the Jenkins Console and go to the failed stage.</li>
-<li>Read the exact error message.</li>
-<li>Check the attached reports / diagnostics file.</li>
-<li>Fix the root cause.</li>
-<li>Re-run the pipeline.</li>
+
+<li>Open failed Jenkins stage.</li>
+
+<li>Read exact console error.</li>
+
+<li>Open relevant attached report.</li>
+
+<li>Fix root cause.</li>
+
+<li>Commit fix.</li>
+
+<li>Run pipeline again.</li>
+
 </ol>
-</div>
-<div class="footer">
-<p><strong>Powered by Jenkins • Docker • Kubernetes • SonarQube • Trivy • OWASP ZAP</strong></p>
-<p>Automated DevSecOps Failure Analysis</p>
-</div>
-</div>
+
+
 </body>
+
 </html>
 """
                 )
             }
         }
 
+
+        // ============================================================
+        // ALWAYS
+        // ============================================================
+
         always {
-            // Clean workspace only after emails and artifacts are handled
-            echo "Cleaning workspace..."
-            cleanWs(deleteDirs: true, notFailBuild: true)
+
+            echo "Cleaning Jenkins workspace..."
+
+            cleanWs(
+                deleteDirs: true,
+                notFailBuild: true
+            )
         }
     }
 }
