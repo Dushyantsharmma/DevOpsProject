@@ -644,6 +644,33 @@ print(data["projectStatus"]["status"])
                 }
             }
         }
+
+        // ============================================================
+        // 10. DOCKER CLEANUP
+        // ============================================================
+        stage('Docker Cleanup') {
+            steps {
+                sh '''
+                    echo "======================================"
+                    echo " Docker Cleanup"
+                    echo "======================================"
+
+                    echo "Removing dangling Docker images..."
+                    docker image prune -f
+
+                    echo "Removing old local fistpipeline images..."
+
+                    docker images "fistpipeline" \
+                        --format "{{.ID}} {{.Tag}}" \
+                        | tail -n +6 \
+                        | awk '{print $1}' \
+                        | xargs -r docker rmi -f || true
+
+                    echo "Docker disk usage after cleanup:"
+                    docker system df
+                '''
+            }
+        }
     }
 
     // ================================================================
@@ -712,6 +739,7 @@ print(data["projectStatus"]["status"])
 <li>✅ Trivy Security Scan</li>
 <li>✅ Docker Hub Push</li>
 <li>✅ Kubernetes Deployment</li>
+<li>✅ Docker Cleanup</li>
 </ul>
 
 <h3>📎 Reports Attached</h3>
