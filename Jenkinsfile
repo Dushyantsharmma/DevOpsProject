@@ -391,32 +391,32 @@ print(data["projectStatus"]["status"])
                             echo "======================================"
 
                             echo "=== TXT Report ==="
-                            TMPDIR=${TRIVY_TEMP} trivy image \
-                                --skip-version-check \
-                                --severity HIGH,CRITICAL \
-                                --format table \
-                                --output trivy-report.txt \
-                                --no-progress \
+                            TMPDIR=${TRIVY_TEMP} trivy image \\
+                                --skip-version-check \\
+                                --severity HIGH,CRITICAL \\
+                                --format table \\
+                                --output trivy-report.txt \\
+                                --no-progress \\
                                 ${IMAGE_NAME}:${BUILD_NUMBER}
 
                             echo "=== JSON Report ==="
-                            TMPDIR=${TRIVY_TEMP} trivy image \
-                                --skip-version-check \
-                                --severity HIGH,CRITICAL \
-                                --format json \
-                                --output trivy-report.json \
-                                --no-progress \
+                            TMPDIR=${TRIVY_TEMP} trivy image \\
+                                --skip-version-check \\
+                                --severity HIGH,CRITICAL \\
+                                --format json \\
+                                --output trivy-report.json \\
+                                --no-progress \\
                                 ${IMAGE_NAME}:${BUILD_NUMBER}
 
                             echo "=== HTML Report ==="
-                            TMPDIR=${TRIVY_TEMP} trivy image \
-                                --skip-version-check \
-                                --severity HIGH,CRITICAL \
-                                --format template \
-                                --template "@contrib/html.tpl" \
-                                --output trivy-report.html \
-                                --no-progress \
-                                ${IMAGE_NAME}:${BUILD_NUMBER} || \
+                            TMPDIR=${TRIVY_TEMP} trivy image \\
+                                --skip-version-check \\
+                                --severity HIGH,CRITICAL \\
+                                --format template \\
+                                --template "@contrib/html.tpl" \\
+                                --output trivy-report.html \\
+                                --no-progress \\
+                                ${IMAGE_NAME}:${BUILD_NUMBER} || \\
                                 echo "HTML template unavailable."
                         """
 
@@ -570,7 +570,7 @@ print(data["projectStatus"]["status"])
                         env.FAILED_STAGE = 'Deploy to Kubernetes'
                         env.FAILED_ERROR = err.getMessage()
 
-                        // Collect rich diagnostics into a file that will be archived + emailed
+                        // Collect rich diagnostics into a file
                         withEnv([
                             "K8S_DEPLOYMENT=${env.K8S_DEPLOYMENT}",
                             "K8S_NAMESPACE=${env.K8S_NAMESPACE}",
@@ -647,18 +647,33 @@ print(data["projectStatus"]["status"])
     }
 
     // ================================================================
-    // POST ACTIONS
+    // POST ACTIONS  (reliable attachments via zip)
     // ================================================================
     post {
 
         success {
-            emailext(
-                subject: "✅ PIPELINE SUCCESS #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
-                mimeType: 'text/html',
-                attachLog: false,
-                attachmentsPattern: 'target/*.war,sonar-quality-gate.json,trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml',
-                to: '227dushyantsharma@gmail.com',
-                body: """
+            script {
+                // Create a single zip with all available reports
+                sh '''
+                    set +e
+                    mkdir -p reports-to-attach
+                    cp -f target/*.war                              reports-to-attach/ 2>/dev/null || true
+                    cp -f sonar-quality-gate.json                   reports-to-attach/ 2>/dev/null || true
+                    cp -f trivy-report.txt trivy-report.json trivy-report.html reports-to-attach/ 2>/dev/null || true
+                    cp -f dependency-check-report.html dependency-check-report.xml reports-to-attach/ 2>/dev/null || true
+                    cd reports-to-attach
+                    zip -r ../pipeline-reports.zip . 2>/dev/null || true
+                    cd ..
+                    ls -la pipeline-reports.zip || echo "No reports zip created"
+                '''
+
+                emailext(
+                    subject: "✅ PIPELINE SUCCESS #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
+                    mimeType: 'text/html',
+                    attachLog: false,
+                    attachmentsPattern: 'pipeline-reports.zip',
+                    to: '227dushyantsharma@gmail.com',
+                    body: """
 <!DOCTYPE html>
 <html>
 <body>
@@ -692,6 +707,7 @@ print(data["projectStatus"]["status"])
 </ul>
 
 <h3>📎 Reports Attached</h3>
+<p>All available reports are inside the attached file: <b>pipeline-reports.zip</b></p>
 <ul>
 <li>📦 WAR Artifact</li>
 <li>📊 SonarQube Quality Gate JSON</li>
@@ -703,7 +719,8 @@ print(data["projectStatus"]["status"])
 </body>
 </html>
 """
-            )
+                )
+            }
         }
 
         failure {
@@ -788,7 +805,7 @@ print(data["projectStatus"]["status"])
                     case 'Deploy to Kubernetes':
                         cause = "Kubernetes deployment or rollout failed."
                         fix = """
-1. Open the attached kubernetes-failure-diagnostics.txt.
+1. Open the attached kubernetes-failure-diagnostics.txt (inside the zip).
 2. Check Pod status (ImagePullBackOff, CrashLoopBackOff, etc.).
 3. Examine Kubernetes Events.
 4. Read Pod logs.
@@ -798,11 +815,26 @@ print(data["projectStatus"]["status"])
                         break
                 }
 
+                // Create zip with whatever reports + diagnostics exist
+                sh '''
+                    set +e
+                    mkdir -p reports-to-attach
+                    cp -f target/*.war                              reports-to-attach/ 2>/dev/null || true
+                    cp -f sonar-quality-gate.json                   reports-to-attach/ 2>/dev/null || true
+                    cp -f trivy-report.txt trivy-report.json trivy-report.html reports-to-attach/ 2>/dev/null || true
+                    cp -f dependency-check-report.html dependency-check-report.xml reports-to-attach/ 2>/dev/null || true
+                    cp -f kubernetes-failure-diagnostics.txt         reports-to-attach/ 2>/dev/null || true
+                    cd reports-to-attach
+                    zip -r ../pipeline-reports.zip . 2>/dev/null || true
+                    cd ..
+                    ls -la pipeline-reports.zip || echo "No reports zip created"
+                '''
+
                 emailext(
                     subject: "❌ PIPELINE FAILED #${env.BUILD_NUMBER} - ${env.JOB_NAME} [${env.FAILED_STAGE ?: 'Unknown'}]",
                     mimeType: 'text/html',
-                    attachLog: true,
-                    attachmentsPattern: 'target/*.war,sonar-quality-gate.json,kubernetes-failure-diagnostics.txt,trivy-report.txt,trivy-report.html,trivy-report.json,dependency-check-report.html,dependency-check-report.xml',
+                    attachLog: true,                          // full console log
+                    attachmentsPattern: 'pipeline-reports.zip',
                     to: '227dushyantsharma@gmail.com',
                     body: """
 <!DOCTYPE html>
@@ -827,10 +859,7 @@ print(data["projectStatus"]["status"])
 <h3>🔍 Debug Information</h3>
 <ul>
 <li>📋 Full Jenkins Console Log is attached</li>
-<li>☸️ kubernetes-failure-diagnostics.txt is attached (if Deploy stage failed)</li>
-<li>🛡️ Trivy reports are attached (when available)</li>
-<li>🔍 Dependency-Check reports are attached (when available)</li>
-<li>📊 SonarQube Quality Gate JSON is attached (when available)</li>
+<li>📦 All available reports + Kubernetes diagnostics are inside <b>pipeline-reports.zip</b></li>
 </ul>
 
 <h3>🔗 Quick Links</h3>
@@ -844,7 +873,7 @@ print(data["projectStatus"]["status"])
 <ol>
 <li>Open the failed Jenkins stage.</li>
 <li>Read the exact error in the console.</li>
-<li>Open the relevant attached report / diagnostics file.</li>
+<li>Download and open <b>pipeline-reports.zip</b>.</li>
 <li>Fix the root cause.</li>
 <li>Commit the fix.</li>
 <li>Re-run the pipeline.</li>
